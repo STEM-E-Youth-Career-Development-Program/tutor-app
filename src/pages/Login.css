@@ -1,0 +1,49 @@
+.bigbody{
+    height: 100vh;
+    background: linear-gradient(to bottom right, #9bd5ff, #bc83cc);     
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    flex: 1;
+}
+
+.center{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+}
+
+h1{
+    
+    text-align: center;
+    color: white;
+    font-weight: normal;
+}
+
+.container{
+  margin: auto;
+  display: flex;
+  background-color: lightgrey;
+  width: 500px;
+  height: 400px;  
+  align-items: center;
+  justify-content: center;
+  
+}
+
+
+.welcome {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.button{
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 20px;
+  flex-wrap: wrap;}
+
+
+
