@@ -1,4 +1,4 @@
-.bigbody{
+.login-bigbody{
     height: 100vh;
     background: linear-gradient(to bottom right, #9bd5ff, #bc83cc);     
     text-align: center;
@@ -8,21 +8,21 @@
     flex: 1;
 }
 
-.center{
+.login-center{
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 40%;
 }
 
-h1{
+h1.login-h1{
     
     text-align: center;
     color: white;
     font-weight: normal;
 }
 
-.container{
+.login-container {
   margin: auto;
   display: flex;
   background-color: lightgrey;
@@ -30,20 +30,21 @@ h1{
   height: 400px;  
   align-items: center;
   justify-content: center;
-  
+  flex-direction: column;  
 }
 
 
-.welcome {
+.login-welcome {
   width: 100%;
   flex-wrap: wrap;
 }
 
-.button{
+.login-button {
   margin-left: auto;
   margin-right: auto;
   font-size: 20px;
-  flex-wrap: wrap;}
+  flex-wrap: wrap;
+}
 
 
 
