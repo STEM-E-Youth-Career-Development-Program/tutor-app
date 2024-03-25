@@ -7,6 +7,8 @@ div.title{
 
 .top{
   color: black;
+  display: flex;
+  flex-direction: column;
 }
 
 .stats-parent {
@@ -15,14 +17,20 @@ div.title{
   align-items: center;
 
   display: inline-block;
-  background-color: lightgray;
 
   text-align: center;
   align-items: center;
+  
 
-  padding-left: 50px;
-  width: 200px;
-  height: 200px;
+  
+}
+
+.stats-parent div {
+  margin: 1em;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 10%;
+  background-color: lightgray;
 }
 
 
@@ -33,13 +41,19 @@ div.title{
   align-items: center;
 
   display: inline-block;
-  background-color: lightgray;
+  background-color: gray;
 
   text-align: center;
   align-items: center;
 
   width: 100%;
-  height: 200px;
+  height: 10em;
+}
+
+.view-parent button {
+  width: 12em;
+  margin: 1em;
+  height: 10em;
 }
   
 
