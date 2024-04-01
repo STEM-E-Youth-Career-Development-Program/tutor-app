@@ -1,11 +1,15 @@
 .login-bigbody{
     height: 100vh;
-    background: linear-gradient(to bottom right, #9bd5ff, #bc83cc);     
+    line-height: 100px;
+    background: linear-gradient(to bottom right, #6353f0, #1d0549);     
     text-align: center;
     display: flex;
     flex-direction: column;
     background-size: cover;
     flex: 1;
+    background-image: url("/workspaces/tutor-app/public/assets/background.jpg");
+    
+    
 }
 
 .login-center{
@@ -15,11 +19,22 @@
   width: 40%;
 }
 
+@font-face {
+  font-family: KumbhSans;
+  src: url(https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap);
+}
+
 h1.login-h1{
     
     text-align: center;
     color: white;
     font-weight: normal;
+    margin-top: 200px;
+
+    font-family: KumbhSans;
+    /*font-family: Verdana, Geneva, Tahoma, sans-serif;*/
+    font-weight: 100;
+    
 }
 
 .login-container {
@@ -31,6 +46,8 @@ h1.login-h1{
   align-items: center;
   justify-content: center;
   flex-direction: column;  
+  margin-bottom: 200px;
+
 }
 
 
