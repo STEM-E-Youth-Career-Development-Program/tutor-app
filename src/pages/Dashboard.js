@@ -10,10 +10,18 @@ function Statistics(){
     </div>
 }
 
-function ViewButton(){
+function ViewButton1(){
     return(
         <button>
-            Test
+            View Tutors
+        </button>
+    );
+}
+
+function ViewButton2(){
+    return(
+        <button>
+            View Students
         </button>
     );
 }
@@ -21,8 +29,8 @@ function ViewButton(){
 function ViewBody() {
     return(
         <div className="view-parent">
-            <ViewButton />
-            <ViewButton />
+            <ViewButton1 />
+            <ViewButton2 />
         </div>
     );
 }

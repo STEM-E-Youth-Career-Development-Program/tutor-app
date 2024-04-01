@@ -7,8 +7,12 @@ div.title{
 
 .top{
   color: black;
+  height: 100vh;
+  text-align: center;
   display: flex;
   flex-direction: column;
+  background-size: cover;
+  flex: 1;
 }
 
 .stats-parent {
@@ -17,12 +21,11 @@ div.title{
   align-items: center;
 
   display: inline-block;
-
+  
   text-align: center;
   align-items: center;
-  
-
-  
+  padding: 1em;
+  margin: 1em;
 }
 
 .stats-parent div {
@@ -41,19 +44,36 @@ div.title{
   align-items: center;
 
   display: inline-block;
-  background-color: gray;
+  background-color: #B5CEFF;
+  
 
   text-align: center;
   align-items: center;
 
   width: 100%;
-  height: 10em;
+  height: 100%;
 }
 
 .view-parent button {
   width: 12em;
   margin: 1em;
-  height: 10em;
+  height: 4em;
+  border: 4px solid;
+  border-color: rgba(21, 38, 188, 1);
+  background-color: #4453DD;
+  font-family: serif;
+  color: white;
+  font-size: 30px;
+  border-radius: 15px;
+  justify-content: center;
+  align-content: center;
 }
+
+.view-parent button:hover {
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+
   
 
