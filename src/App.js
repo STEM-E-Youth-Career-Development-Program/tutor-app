@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 //import Navbar from "./components/Navbar";
 import {
     BrowserRouter as Router,
     Routes,
     Route,
+    Navigate,
 } from "react-router-dom";
 
 import NavBar from "./components/Navbar"
@@ -18,14 +19,25 @@ import SignUp from "./pages/Matching.js
 import Contact from "./pages/contact";
  */
 function App() {
-  return <>
+    const [ user, setUser ] = useState(undefined);
+
+    const loginElement = <Login user={user} setUser={setUser} />
+
+    return <>
       <Router>
-          <NavBar />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<NoPage />} />
-          </Routes>
+            { user && <NavBar user={user} setUser={setUser} /> }
+            <Routes>
+                <Route path="/"  element={loginElement} />
+                <Route path="/login" element={loginElement} />
+                {
+                    !user ? <>
+                        <Route path="*" element={<Navigate to="/login" />} />
+                    </> : <>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="*" element={<NoPage />} />
+                    </>
+                }
+            </Routes>
       </Router>
     </>;
 }
