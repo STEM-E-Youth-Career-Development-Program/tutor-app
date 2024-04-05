@@ -7,7 +7,7 @@
     flex-direction: column;
     background-size: cover;
     flex: 1;
-    background-image: url("/workspaces/tutor-app/public/assets/background.jpg"); 
+    background-image: url("../../public/assets/background.jpg"); 
 }
 
 .login-center{
