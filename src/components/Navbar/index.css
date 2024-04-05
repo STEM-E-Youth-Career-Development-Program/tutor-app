@@ -1,19 +1,29 @@
-nav {
-    display : block;
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     background-color: #6260EF;
-    height: 100px;
-    display: inline-block;
 }
 
-.element{
-    margin: 0.5em;
+.navbar ul li {
+    float: left;
 }
 
-a {
+.navbar ul li a {
+    display: block;
     color: white;
-    font-family: sans-serif;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;  
 }
 
-img{
-    width:
+@media screen and (max-width: 600px)  {
+    .navbar ul li {
+        float: none;
+    }
+}
+
+.navbar ul li a:hover {
+    background-color: #4543b6;
 }
