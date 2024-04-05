@@ -2,7 +2,7 @@ import "./index.css"
 
 export default function NavBar() {
     return <>
-        <nav class="navbar">
+        <nav className="navbar">
             <ul>
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/">Tutor List</a></li>

@@ -9,12 +9,12 @@ function Login() {
         console.log(error);
     };
 
-    return <div class="login-bigbody">
-        <h1 class="login-h1">Login</h1>
+    return <div className="login-bigbody">
+        <h1 className="login-h1">Login</h1>
         
-        <div class="login-center login-container">
+        <div className="login-center login-container">
 
-            <div class="login-welcome"><b>Welcome! Please Login Below:&nbsp;</b></div>
+            <div className="login-welcome"><b>Welcome! Please Login Below:&nbsp;</b></div>
             {/*<div class= "login-button"><button>Login with Google</button></div>*/}
             <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
         </div>
