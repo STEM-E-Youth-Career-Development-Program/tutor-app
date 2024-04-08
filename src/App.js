@@ -11,6 +11,7 @@ import NavBar from "./components/Navbar"
 import Dashboard from "./pages/Dashboard.js"
 import NoPage from "./pages/NoPage.js"
 import Login from "./pages/Login.js"
+import ViewStudents from "./pages/ViewStudents.js"
 /*
 import Home from "./pages";
 import About from "./pages/Dashboard.js";
@@ -19,7 +20,7 @@ import SignUp from "./pages/Matching.js
 import Contact from "./pages/contact";
  */
 function App() {
-    const [ user, setUser ] = useState(undefined);
+    const [ user, setUser ] = useState([]);
 
     const loginElement = <Login user={user} setUser={setUser} />
 
@@ -34,6 +35,7 @@ function App() {
                         <Route path="*" element={<Navigate to="/login" />} />
                     </> : <>
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/view-students" element={<ViewStudents />} />
                         <Route path="*" element={<NoPage />} />
                     </>
                 }
