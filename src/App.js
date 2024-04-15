@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard.js"
 import NoPage from "./pages/NoPage.js"
 import Login from "./pages/Login.js"
 import ViewStudents from "./pages/ViewStudents.js"
+import ViewTutors from "./pages/ViewTutors.js"
 /*
 import Home from "./pages";
 import About from "./pages/Dashboard.js";
@@ -36,6 +37,7 @@ function App() {
                     </> : <>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/view-students" element={<ViewStudents />} />
+                        <Route path="/view-tutors" element={<ViewTutors />} />
                         <Route path="*" element={<NoPage />} />
                     </>
                 }
