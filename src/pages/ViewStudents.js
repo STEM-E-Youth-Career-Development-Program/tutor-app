@@ -1,35 +1,28 @@
-import "./ViewStudents.css"
+import "./ViewStudents.css";
 
 function SortOptions() {
     return <> 
         
 <div class="dropdown">
-  <span>Sort Options</span>
+   <span class="dropdownbutton">Sort Options</span>
   <div class="dropdown-content"> 
-    <div class = "StatusSection"> Status
+    <div class= "StatusSection"> Status
         <br />
-        <input type="checkbox" name="First" value="First"></input>
-                <label for="NewTutor">New Tutor</label>
-                <input type="checkbox" name="NewTutor" value="NewTutor"></input>
-                <label for="Second">Matching in Progress</label>
-                <input type="checkbox" name="TempInactive" value="Third"></input>
-                <label for="Third">Temp Inactive</label>
-                <input type="checkbox" name="CurrentlyTutoring" value="Fourth"></input>
-                <label for="Fourth">Currently Tutoring</label>
-                <input type="checkbox" name="SpotsFilled" value="Five"></input>
-                <label for="Fifth">Currently Tutoring -- all spots filled</label>
-                <input type="checkbox" name="CurrentlyTutoring" value="Sixth"></input>
-                <label for="Sixth">Currently Tutoring </label>
-                <input type="checkbox" name="Progress" value="Seventh"></input>
-                <label for="Seventh">Matching in Progress</label>
-                <input type="checkbox" name="NoLonger" value="Eight"></input>
-                <label for="Seventh">No Longer a Tutor</label>
-                <input type="checkbox" name="Ninth" value="Third"></input>
-                <label for="Second">Currently Tutoring -- needs more students</label>
+        <div class="Dropdowndiv">
+                <label for="First">Newly Signed Up</label>
+                <input type="checkbox" name="First" value="First"></input>
+                <label for="Second">Update Needed</label>
+                <input type="checkbox" name="Second" value="Second"></input>
+                <label for="Third">Unmatched Student</label>
+                <input type="checkbox" name="Third" value="Third"></input>
+                <label for="Fourth">Currently being Tutoring</label>
+                <input type="checkbox" name="Fourth" value="Fourth"></input>
+                <label for="Fifth">Matching In Progress</label>
+                <input type="checkbox" name="Fifth" value="Fifth"></input>
+                <label for="Sixth">No Longer a Student</label>
+                <input type="checkbox" name="Sixth" value="Sixth"></input>
+            </div>
         </div>
-        <div class="StatusSection">Status
-            <label class="container">New Tutor</label>
-        </div> 
         <div class="SubjectsSection">
             Subjects
             <br></br>
@@ -57,7 +50,7 @@ function SortOptions() {
             <label for="Third">3rd</label>
             <input type="checkbox" name="Fourth" value="Fourth"></input>
             <label for="Fourth">4th</label>
-            <input type="checkbox" name="Five" value="Five"></input>
+            <input type="checkbox" name="Fifth" value="Fifth"></input>
             <label for="Fifth">5th</label>
             <input type="checkbox" name="Sixth" value="Sixth"></input>
             <label for="Sixth">6th</label>
@@ -76,8 +69,8 @@ function SortOptions() {
         </div>
     </div>
     <div class="TimezoneSection">Timezone</div>
-        <br></br>
-        <div>
+        {/* <br></br> */}
+        <div class="Dropdowndiv">
             <input type="checkbox" name="EST" value="EST"></input>
             <label for="EST">EST</label>
             <input type="checkbox" name="PST" value="PST"></input>
