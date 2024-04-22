@@ -1,5 +1,47 @@
-.left-stats-parent{
+.student-stats-parent{
     background-color: lightgray;
     border-radius: 5%;
-    padding:4rem;
+    padding:1rem;
+    margin: 3rem;
+    width: 40%;
+    text-align: left;
 }
+
+.student-dropdown{
+    margin: 0px;
+}
+
+.view-students-info-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.notesheader{
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+
+}
+.notesbox{
+    background-color: white;
+    border: 2px solid black;
+    width: 400px;
+    height: 150px;
+    
+}
+h1{
+    margin-bottom: 0px;
+}
+.view-student-info-h2{
+    margin-top: 0px;
+}
+
+.dropdownbutton{
+    margin-top: 0;
+    margin: 0; 
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+}
+
