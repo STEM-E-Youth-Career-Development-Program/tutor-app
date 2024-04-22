@@ -1,28 +1,33 @@
 import "./ViewStudents.css";
+import { useId } from 'react';
+
+function CheckboxElement(props) {
+    const id = useId()
+    return <>
+        <label for={id}>{props.label}</label>
+        <input type="checkbox" id={id} />
+    </>
+}
 
 function SortOptions() {
     return <> 
         
 <div class="dropdown">
-   <span class="dropdownbutton">Sort Options</span>
-  <div class="dropdown-content"> 
+    <span class="dropdownbutton">Sort Options</span>
+    <div class="dropdown-content"> 
     <div class= "StatusSection"> Status
         <br />
         <div class="Dropdowndiv">
-                <label for="First">Newly Signed Up</label>
-                <input type="checkbox" name="First" value="First"></input>
-                <label for="Second">Update Needed</label>
-                <input type="checkbox" name="Second" value="Second"></input>
-                <label for="Third">Unmatched Student</label>
-                <input type="checkbox" name="Third" value="Third"></input>
-                <label for="Fourth">Currently being Tutoring</label>
-                <input type="checkbox" name="Fourth" value="Fourth"></input>
-                <label for="Fifth">Matching In Progress</label>
-                <input type="checkbox" name="Fifth" value="Fifth"></input>
-                <label for="Sixth">No Longer a Student</label>
-                <input type="checkbox" name="Sixth" value="Sixth"></input>
-            </div>
+            <ul className="cols-2">
+                <li><CheckboxElement label="Newly Signed Up" /></li>
+                <li><CheckboxElement label="Update Needed" /></li>
+                <li><CheckboxElement label="Unmatched Student" /></li>
+                <li><CheckboxElement label="Currently being Tutored" /></li>
+                <li><CheckboxElement label="Matching in Progress" /></li>
+                <li><CheckboxElement label="No Longer a Student" /></li>
+            </ul>
         </div>
+    </div>
         <div class="SubjectsSection">
             Subjects
             <br></br>
