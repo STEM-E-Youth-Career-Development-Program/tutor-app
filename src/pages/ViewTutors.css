@@ -1,6 +1,8 @@
 .dropdown {
     position: relative;
     display: inline-block;
+    margin-left: 10px;
+    margin-top: 10px;
   }
   .Dropdowndiv{
     font-size: small;
@@ -12,7 +14,7 @@
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 160px;
+    min-width: 450px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 12px 16px;
     z-index: 1;
@@ -21,6 +23,10 @@
   
   .dropdown:hover .dropdown-content {
     display: block;
+  }
+
+  .dropdownTable {
+    border: 0px;
   }
 
 .viewtable {
@@ -41,4 +47,68 @@
     text-align: left;  
 }
 
+
+
+.StatusSection {
+  font-weight: bold; 
+  font-size: 15pt; 
+}
+
+.StatusSection label {
+  font-weight: normal; 
+  font-size: 12pt;
+  
+}
+
+.SubjectsSection {
+  font-weight: bold; 
+  font-size: 15pt; 
+}
+
+.SubjectsSection label {
+  font-weight: normal; 
+  font-size: 12pt;
+  
+}
+
+.GradeSection {
+  font-weight: bold; 
+  font-size: 15pt; 
+}
+
+.GradeSection label {
+  font-weight: normal; 
+  font-size: 12pt;
+  
+}
+
+.TimezoneSection {
+  font-weight: bold; 
+  font-size: 15pt; 
+}
+
+.TimezoneSection label {
+  font-weight: normal; 
+  font-size: 12pt;
+  
+}
+
+.drop {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #0051ff; 
+  color: white; 
+  font-weight: bold; 
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px; 
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
+  overflow: hidden;
+}
+
+.drop:hover {
+  background-color: #45a049; 
+}
 

@@ -13,7 +13,7 @@ function SortOptions() {
     return <> 
         
 <div class="dropdown">
-    <span class="dropdownbutton">Sort Options</span>
+    <span class="drop">Sort Options</span>
     <div class="dropdown-content"> 
     <div class= "StatusSection"> Status
         <br />
@@ -116,7 +116,7 @@ function ViewStudents() {
                 <th># of Students</th>
                 <th>Max Students</th>
                 <th>Subjects</th>
-                </tr>
+            </tr>
             <TutorRow name="John Doe" status="Matching" numStudents={0} maxStudents={15} subjects={"Math"} />
         </table>
     </>

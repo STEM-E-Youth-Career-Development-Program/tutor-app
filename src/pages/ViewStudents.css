@@ -55,3 +55,22 @@
   padding: 0;
   margin: 0;
 }
+
+.drop {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #0051ff; 
+  color: white; 
+  font-weight: bold; 
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px; 
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
+  overflow: hidden;
+}
+
+.drop:hover {
+  background-color: #45a049; 
+}
