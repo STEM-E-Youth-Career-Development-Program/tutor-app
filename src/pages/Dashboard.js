@@ -1,10 +1,31 @@
+import { useEffect, useState } from "react";
 import "./Dashboard.css"
+import { useFirebaseApp } from "../FirebaseAppContext";
 
-function Statistics(){
+import { getFirestore, getDocs, collection, query, where } from "firebase/firestore";
+
+function Statistics() {
+    const firebaseApp = useFirebaseApp()
+    const db = getFirestore(firebaseApp)
+    const [numberUnmatchedStudents, setNumberUnmatchedStudents] = useState("")
+
+
+    const fetchNumberUnmatched = async () => {
+        const studentsCollection = collection(db, "students")
+        // query 
+        const q = query(studentsCollection, where("status", "==", "unmatched"))
+        const querySnapshot = await getDocs(q)
+        setNumberUnmatchedStudents(querySnapshot.size)
+    }
+
+    useEffect(() => {
+        fetchNumberUnmatched()
+    })
+
     return <div className="stats-parent">
         <div>
             <h1>
-                10 Unmatched Students<br />15 Avaliable Tutors
+                {numberUnmatchedStudents} Unmatched Students<br />15 Avaliable Tutors
             </h1>    
         </div>
     </div>
