@@ -20,6 +20,7 @@ import Blogs from "./pages/Login.js";
 import SignUp from "./pages/Matching.js
 import Contact from "./pages/contact";
  */
+import { ViewTutorInfo } from "./pages/ViewTutorInfo.js";
 function App() {
     const [ user, setUser ] = useState([]);
 
@@ -40,6 +41,7 @@ function App() {
                         <Route path="/view-tutors" element={<ViewTutors />} />
                         <Route path="*" element={<NoPage />} />
                         <Route path="/view-student-info" element={<ViewStudentInfo/>} />
+                        <Route path="/view-tutor-info" element={<ViewTutorInfo/>} />
                     </>
                 }
             </Routes>
