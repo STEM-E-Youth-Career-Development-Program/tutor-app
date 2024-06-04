@@ -1,0 +1,45 @@
+.tutor-stats-parent{
+    background-color: lightgray;
+    border-radius: 25px;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-left: 3rem;
+    width: 40%;
+    text-align: left;
+}
+
+
+.view-tutor-info-box{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+h1{
+    margin-bottom: 0px;
+    font-size: xxx-large;
+}
+
+
+.view-tutor-info-h2 {
+    margin-top: 0px;
+    padding-left: 50px;
+    padding-top: 50px;
+}
+
+p2 {
+    color: red;
+    text-decoration: underline;
+}
+
+p3 {
+    font-size: small;
+}
+
+p4 {
+    font-size: small;
+}
+
+p5 {
+    font-weight: normal;
+}

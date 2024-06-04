@@ -13,7 +13,8 @@ import NoPage from "./pages/NoPage.js"
 import Login from "./pages/Login.js"
 import ViewStudents from "./pages/ViewStudents.js"
 import ViewStudentInfo from "./pages/ViewStudentInfo.js"
-import ViewTutors from "./pages/ViewTutors.js"/*
+import ViewTutors from "./pages/ViewTutors.js"
+import ViewTutorInfo from "./pages/ViewTutorInfo.js"/*
 import Home from "./pages";
 import About from "./pages/Dashboard.js";
 import Blogs from "./pages/Login.js";
