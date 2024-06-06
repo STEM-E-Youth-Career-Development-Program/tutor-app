@@ -3,6 +3,7 @@ import "./Dashboard.css"
 import { useFirebaseApp } from "../FirebaseAppContext";
 
 import { getFirestore, getDocs, collection, query, where } from "firebase/firestore";
+import { useGetNumberOfTutorsQuery } from "../state/tutorsSlice";
 
 function Statistics() {
     const firebaseApp = useFirebaseApp()
@@ -22,10 +23,12 @@ function Statistics() {
         fetchNumberUnmatched()
     })
 
+    const { data } = useGetNumberOfTutorsQuery()
+
     return <div className="stats-parent">
         <div>
             <h1>
-                {numberUnmatchedStudents} Unmatched Students<br />15 Avaliable Tutors
+                {numberUnmatchedStudents} Unmatched Students<br />{data} Avaliable Tutors
             </h1>    
         </div>
     </div>
