@@ -21,7 +21,7 @@ import Blogs from "./pages/Login.js";
 import SignUp from "./pages/Matching.js
 import Contact from "./pages/contact";
  */
-import { ViewTutorInfo } from "./pages/ViewTutorInfo.js";
+// import { ViewTutorInfo } from "./pages/ViewTutorInfo.js";
 function App() {
     const [ user, setUser ] = useState([]);
 
