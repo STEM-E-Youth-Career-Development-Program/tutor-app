@@ -1,5 +1,5 @@
 import "./ViewTutorInfo.css";
-//hj
+
 function Availability(){
     return <> 
         <div class="availability-table">
@@ -49,13 +49,23 @@ function Availability(){
     </>
 }
 
-function AvailabilityChart(){
-    return<>
+function AvailabilityChart() {
+    return (
         <div className="Headings">
-            <p>Available</p>
-            <p>Unavailable</p>
+            <div className="heading-item available">Available</div>
+            <div className="heading-item unavailable">Unavailable</div>
         </div>
-    </>
+    );
+}
+
+
+function ViewTutorInfo() {
+    return (
+        <>
+            <Availability />
+            <AvailabilityChart />
+        </>
+    );
 }
 
 export default ViewTutorInfo;
