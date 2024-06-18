@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 //import Navbar from "./components/Navbar";
 import {
     BrowserRouter as Router,
@@ -21,7 +21,6 @@ import Blogs from "./pages/Login.js";
 import SignUp from "./pages/Matching.js
 import Contact from "./pages/contact";
  */
-import { ViewTutorInfo } from "./pages/ViewTutorInfo.js";
 function App() {
     const [ user, setUser ] = useState([]);
 
@@ -42,7 +41,8 @@ function App() {
                         <Route path="/view-tutors" element={<ViewTutors />} />
                         <Route path="*" element={<NoPage />} />
                         <Route path="/view-student-info" element={<ViewStudentInfo/>} />
-                        <Route path="/view-tutor-info" element={<ViewTutorInfo/>} />
+                        <Route path="/view-tutor-info/:id" element={<ViewTutorInfo />} />
+                        {/* http://localhost:3000/view-tutor-info/cfAaRMmT03OPHo1kvvmN */}
                     </>
                 }
             </Routes>
