@@ -1,4 +1,5 @@
 import "./ViewTutors.css"
+import React, { useEffect, useState } from 'react';
 
 /*
 table for organizing dropdown?
@@ -27,14 +28,22 @@ table for organizing dropdown?
   </table>
 */
 function SortOptions() {
+    const [status, setStatus] = useState(localStorage.getItem('tutorStatus') || '');
+
+    useEffect(() => {
+    localStorage.setItem('tutorStatus', status);
+    }, [status]);
+
+    const handleChange = (event) => {
+    setStatus(event.target.value);
+    };
     return <> 
-        
 <div class="dropdown">
   <span class="drop">Sort Options</span>
   <div class="dropdown-content"> 
     <div class = "StatusSection"> Status:
         <br></br>
-            <table class="dropdownTable">
+            {/* <table class="dropdownTable">
                 <tr>
                     <td>
                     <input type="checkbox" name="NewTutor" value="NewTutor"></input>
@@ -81,7 +90,21 @@ function SortOptions() {
                     <label for="Tenth">Currently Tutoring - All Spots Filled</label>
                     </td>
                 </tr>
-            </table>
+            </table> */}
+            <div>
+                <label for="tutorStatus">Tutor Status: </label>
+                <select id="tutorStatus" name="tutorStatus" value={status} onChange={handleChange}>
+                    <option value="NewTutor">New Tutor</option>
+                    <option value="CurrentlyTutoring">Currently Tutoring</option>
+                    <option value="MatchingInProgress1">Matching In Progress</option>
+                    <option value="MatchingInProgress2">Matching In Progress</option>
+                    <option value="TempInactive">Temp Inactive</option>
+                    <option value="NoLongerTutor">No Longer a Tutor</option>
+                    <option value="AwaitingUpdate">Currently Tutoring - Awaiting Update</option>
+                    <option value="NeedsMoreStudents">Currently Tutoring - Needs More Students</option>
+                    <option value="AllSpotsFilled">Currently Tutoring - All Spots Filled</option>
+                </select>
+            </div>
         </div>
         <div class="SubjectsSection">
             Subjects:
@@ -246,4 +269,3 @@ function ViewStudents() {
 
 
 export default ViewStudents;
-
