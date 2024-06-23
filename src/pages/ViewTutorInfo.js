@@ -1,4 +1,5 @@
 import "./ViewTutorInfo.css";
+import { useEffect } from 'react';
 import { useGetTutorByIdQuery } from "../state/tutorsSlice";
 import { useParams } from "react-router-dom"
 
@@ -46,7 +47,73 @@ function LeftStats({ tutor }){
     </>
 }
 
+function Availability(){
+    useEffect(() => {
+        const cells = document.querySelectorAll('td');
 
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                cell.classList.add('available');
+            });
+        });
+    }, []);
+    
+    return <> 
+        <div class="availability-table">
+            <table>
+                <tr className="day-headings">
+                    <th scope="col"></th>
+                    <th scope="col">Mon</th>
+                    <th scope="col">Tue</th>
+                    <th scope="col">Wed</th>
+                    <th scope="col">Thu</th>
+                    <th scope="col">Fri</th>
+                    <th scope="col">Sat</th>
+                    <th scope="col">Sun</th>
+                </tr>
+                <tr>
+                    <th scope="row">Morning</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">Afternoon</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th scope="row">Evening</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </>
+}
+
+function AvailabilityChart() {
+    return (
+        <div className="Headings">
+            <div className="heading-item available">Available</div>
+            <div className="heading-item unavailable">Unavailable</div>
+        </div>
+    );
+}
 
 function ViewTutorInfo() {;
     const { id } = useParams();
@@ -56,6 +123,10 @@ function ViewTutorInfo() {;
         <h1 className="view-tutor-info-h2"><p5>{tutor.firstName} {tutor.lastName}</p5></h1>
         <div className="view-tutor-info-box">
             <LeftStats tutor={tutor}/>
+            <div className="availability-section">
+                <Availability />
+                <AvailabilityChart />
+            </div>
         </div>
     </>
 
