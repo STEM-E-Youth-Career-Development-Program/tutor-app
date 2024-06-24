@@ -1,5 +1,4 @@
 import "./ViewTutorInfo.css";
-import { useEffect } from 'react';
 import { useGetTutorByIdQuery } from "../state/tutorsSlice";
 import { useParams } from "react-router-dom"
 
@@ -47,17 +46,17 @@ function LeftStats({ tutor }){
     </>
 }
 
-function Availability(){
-    useEffect(() => {
-        const cells = document.querySelectorAll('td');
+function Availability({ tutor }){
+    console.log(tutor.availability)
 
-        cells.forEach(cell => {
-            cell.addEventListener('click', () => {
-                cell.classList.add('available');
-            });
-        });
-    }, []);
-    
+    const isAvailable = (day, time) => {
+        return tutor.availability[3*day+time];
+    }
+
+    const getClassName = (day, time) => {
+        return isAvailable(day, time) ? "available" : "unavailable";
+    }
+
     return <> 
         <div class="availability-table">
             <table>
@@ -73,33 +72,33 @@ function Availability(){
                 </tr>
                 <tr>
                     <th scope="row">Morning</th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td className={getClassName(1,0)}></td>
+                    <td className={getClassName(2,0)}></td>
+                    <td className={getClassName(3,0)}></td>
+                    <td className={getClassName(4,0)}></td>
+                    <td className={getClassName(5,0)}></td>
+                    <td className={getClassName(6,0)}></td>
+                    <td className={getClassName(0,0)}></td>
                 </tr>
                 <tr>
                     <th scope="row">Afternoon</th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td className={getClassName(1,1)}></td>
+                    <td className={getClassName(2,1)}></td>
+                    <td className={getClassName(3,1)}></td>
+                    <td className={getClassName(4,1)}></td>
+                    <td className={getClassName(5,1)}></td>
+                    <td className={getClassName(6,1)}></td>
+                    <td className={getClassName(0,1)}></td>
                 </tr>
                 <tr>
                     <th scope="row">Evening</th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td className={getClassName(1,2)}></td>
+                    <td className={getClassName(2,2)}></td>
+                    <td className={getClassName(3,2)}></td>
+                    <td className={getClassName(4,2)}></td>
+                    <td className={getClassName(5,2)}></td>
+                    <td className={getClassName(6,2)}></td>
+                    <td className={getClassName(0,2)}></td>
                 </tr>
             </table>
         </div>
@@ -124,7 +123,7 @@ function ViewTutorInfo() {;
         <div className="view-tutor-info-box">
             <LeftStats tutor={tutor}/>
             <div className="availability-section">
-                <Availability />
+                <Availability tutor={tutor} />
                 <AvailabilityChart />
             </div>
         </div>
