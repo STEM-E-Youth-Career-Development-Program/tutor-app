@@ -1,5 +1,5 @@
 import "./ViewTutorInfo.css";
-import { useGetTutorByIdQuery } from "../state/tutorsSlice";
+import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
 import { useParams } from "react-router-dom"
 
 /**
@@ -11,12 +11,23 @@ import { useParams } from "react-router-dom"
  * @param {TutorData} params.tutor 
  * @returns {React.JSX.Element}
  */
-function LeftStats({ tutor }){
+function LeftStats({ tutor, tutorId }){
+    const [updateTutor] = useUpdateTutorByIdMutation();
+    const updateTutorStatus = (event) => {
+        updateTutor({ ...tutor, id: tutorId, status: event.target.value })
+    }
+
     return <>
         <div className="tutor-stats-parent">
-            <p1><b>Status: </b><p2>{tutor.status}</p2></p1>
-            <br></br>
-            <a href="mailto:info@steme.org"><p4>CHANGE STATUS</p4></a>
+            <b>Status: </b>
+            {/* Update a tutor's status here */}
+            <select onChange={updateTutorStatus} defaultValue={tutor.status}>
+                <option value={"currentlyTutoring"}>Currently Tutoring</option>
+                <option value={"matchingInProgress"}>Matching in Progress</option>
+                <option value={"unmatched"}>Unmatched Tutor</option>
+                <option value={"updateNeeded"}>Update Needed</option>
+            </select>
+
             <br></br>
             <br></br>
             <b>Grade Level: </b> {tutor.grade}
@@ -41,14 +52,15 @@ function LeftStats({ tutor }){
             <b>Number of Tutees: </b>TODO
             <br></br>
             <br></br>
-            <b>Availibility </b>
+            <b>Availibility:</b>
+            <br />
+            <Availability tutor={tutor} />
+            <AvailabilityChart />
         </div>
     </>
 }
 
 function Availability({ tutor }){
-    console.log(tutor.availability)
-
     const isAvailable = (day, time) => {
         return tutor.availability[3*day+time];
     }
@@ -119,12 +131,11 @@ function ViewTutorInfo() {;
     const { data: tutor, isLoading, isError } = useGetTutorByIdQuery(id);
 
     return isError ? `Failed to find tutor with id ${id}` : isLoading ? "Loading..." : <>
-        <h1 className="view-tutor-info-h2"><p5>{tutor.firstName} {tutor.lastName}</p5></h1>
+        <h1 className="view-tutor-info-h2">{tutor.firstName} {tutor.lastName}</h1>
         <div className="view-tutor-info-box">
-            <LeftStats tutor={tutor}/>
+            <LeftStats tutor={tutor} tutorId={id}/>
             <div className="availability-section">
-                <Availability tutor={tutor} />
-                <AvailabilityChart />
+                
             </div>
         </div>
     </>

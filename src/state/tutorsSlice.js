@@ -12,7 +12,7 @@ import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, qu
  * @property {string} tutorManager // Note: this may change
  * @property {string} notes
  * @property {string} status
- * @property {Date} lastUpdated
+ * @property {number} lastUpdated timestamp (seconds since epoch)
  * @property {string} email
  * @property {string} gender
  * @property {number} grade The student's grade (0 is K, 1 is 1st grade, ..., 13 is post-secondary)
@@ -72,10 +72,11 @@ const tutorsSlice = createApi({
              * @param {string} id 
              * @param {TutorData} tutorData 
              */
-            async queryFn(id, tutorData) {
+            async queryFn({ id, ...tutorData }) {
                 const db = getFirestore(firebaseApp)
                 const docRef = doc(db, "tutors", id)
                 await setDoc(docRef, tutorData)
+                return {}
             },
             invalidatesTags: ["Tutors"]
         }),
