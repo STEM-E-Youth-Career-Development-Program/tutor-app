@@ -1,15 +1,15 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { firebaseApp } from "../firebaseApp";
-import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, query, doc } from "firebase/firestore";
+import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
 
 // TODO: Caching
 
 /**
- * @typedef {Object} TutorData
+ * @typedef {Object} StudentData
  * @property {string} firstName
  * @property {string} lastName
- * @property {boolean} attendedOrientation
  * @property {string} tutorManager // Note: this may change
+ * @property {string[]} tutors // Note: this may change
  * @property {string} notes
  * @property {string} status
  * @property {number} lastUpdated timestamp (seconds since epoch)
@@ -21,7 +21,16 @@ import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, qu
  *  with days 0-6 where 0 is Sunday and slots 0-2 where 0 is morning (before noon), 1 is afternoon (noon-5pm), and 2 is evening (after 5pm)
  * @property {boolean} inPerson Whether the tutor is available in person; if virtual is also true, no preference was specified
  * @property {boolean} virtual Whether the tutor is available virtually; if inPerson is also true, no preference was specified
- * @property {string} city
+ * 
+ * @property {string} legalGuardianFirstName
+ * @property {string} legalGuardianLastName
+ * @property {string} legalGuardianHomeAddress
+ * @property {string} legalGuardianPhoneNumber
+ * @property {string} legalGuardianPhoneType
+ * 
+ * @property {string} emergencyContactFullName
+ * @property {string} emergencyContactPhoneNumber
+ * @property {string} emergencyContactRelationship relationship to student
  * 
  * @property {string[]} mathSubjects
  * @property {string[]} scienceSubjects
@@ -30,8 +39,7 @@ import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, qu
  * @property {string[]} miscSubjects
  * @property {string} otherSubjects
  * 
- * @property {string} numStudentsRange
- * @property {string} numHoursRange
+ * @property {boolean} permitsMultipleTutors
  * 
  * @property {boolean} prefersHomeworkHelp Whether the tutor prefers to provide occasional homework help; 
  *  if both this and prefersSubjectHelp are false, no preference was specified
@@ -42,20 +50,29 @@ import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, qu
  * @property {string} gpa
  * @property {string} letterGradeInSubjectsTutoring
  * @property {string} reasonForTutoring
+ * @property {string} primaryLanguage
+ * 
+ * @property {string} sourceOfStudent How did you hear about this program?
+ * 
+ * @property {string} ethnicityAndNationality
+ * 
+ * @property {string} foodAllergies
+ * @property {string} otherHealthConcerns
+ * @property {boolean} hasEpipen
  */
 
-const tutorsSlice = createApi({
+const studentsSlice = createApi({
     baseQuery: fakeBaseQuery(),
-    tagTypes: ["Tutors"],
-    reducerPath: "tutors",
+    tagTypes: ["Students"],
+    reducerPath: "students",
     endpoints: (builder) => ({
         /**
-         * @type {builder.query<TutorData, string>}
+         * @type {builder.query<StudentData, string>}
          */
-        getTutorById: builder.query({
+        getStudentById: builder.query({
             async queryFn(id) {
                 const db = getFirestore(firebaseApp)
-                const docRef = doc(db, "tutors", id)
+                const docRef = doc(db, "students", id)
                 const docSnap = await getDoc(docRef)
                 if (docSnap.exists()) {
                     return { data: docSnap.data() }
@@ -66,55 +83,24 @@ const tutorsSlice = createApi({
             providesTags: ["Tutors"]
         }),
 
-        updateTutorById: builder.mutation({
+        updateStudentById: builder.mutation({
             /**
              * @param {string} id 
-             * @param {TutorData} tutorData 
+             * @param {StudentData} studentData 
              */
-            async queryFn({ id, ...tutorData }) {
+            async queryFn({ id, ...studentData }) {
                 const db = getFirestore(firebaseApp)
-                const docRef = doc(db, "tutors", id)
-                await setDoc(docRef, tutorData)
+                const docRef = doc(db, "students", id)
+                await setDoc(docRef, studentData)
                 return {}
             },
             invalidatesTags: ["Tutors"]
         }),
-
-        /**
-         * @type {builder.query<number, void>}
-         */
-        getNumberOfTutors: builder.query({
-            async queryFn() {
-                const db = getFirestore(firebaseApp)
-                const tutorsCollection = collection(db, "tutors")
-                const snapshot = await getCountFromServer(tutorsCollection);
-
-                return { data: snapshot.data().count }
-            },
-            providesTags: ["Tutors"]
-        }),
-
-        /**
-         * @type {builder.query<number, void>}
-         */
-        getNumberOfAvailableTutors: builder.query({
-            async queryFn() {
-                const db = getFirestore(firebaseApp)
-                const tutorsCollection = collection(db, "tutors")
-                const q = query(tutorsCollection, where("status", "==", "currentlyTutoringNeedsMoreStudents"))
-                const snapshot = await getCountFromServer(q);
-
-                return { data: snapshot.data().count }
-            },
-            providesTags: ["Tutors"]
-        })
     })
 })
 
 export const { 
-    useGetTutorByIdQuery,
-    useUpdateTutorByIdMutation,
-    useGetNumberOfTutorsQuery,
-    useGetNumberOfAvailableTutorsQuery,
-} = tutorsSlice
-export default tutorsSlice;
+    useGetStudentByIdQuery,
+    useUpdateStudentByIdMutation,
+} = studentsSlice
+export default studentsSlice;
