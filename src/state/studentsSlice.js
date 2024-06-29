@@ -46,11 +46,9 @@ import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
  * @property {boolean} prefersSubjectHelp Whether the tutor prefers to provide subject help;
  *  if both this and prefersHomeworkHelp are false, no preference was specified
  * 
- * @property {string} priorExperienceDescription
- * @property {string} gpa
- * @property {string} letterGradeInSubjectsTutoring
- * @property {string} reasonForTutoring
  * @property {string} primaryLanguage
+ * @property {string} schoolName
+ * @property {string} schoolDistrictName
  * 
  * @property {string} sourceOfStudent How did you hear about this program?
  * 
