@@ -23,13 +23,6 @@
     margin-bottom: 20px;
 
 }
-.notesbox{
-    background-color: white;
-    border: 2px solid black;
-    width: 400px;
-    height: 150px;
-    
-}
 h1{
     margin-bottom: 0px;
 }
@@ -45,3 +38,42 @@ h1{
     padding: 0;
 }
 
+.notesbox{
+    background-color: white;
+    border: 2px solid black;
+    width: 400px;
+    height: 150px;
+    margin-bottom: 45px;
+}
+.notesbox textarea {
+width: 100%;
+height: 100px;
+resize: none; 
+box-sizing: border-box;
+border: none; 
+background-color: transparent; 
+outline: none;
+font-size: 16px; 
+color: #333; 
+margin-bottom: 20px;
+}
+
+.notesbox button {
+margin-top: 40px;
+padding: 10px 20px;
+background-color: #3071BD;
+color: black;
+border: none;
+cursor: pointer;
+font-size: 16px;
+border-radius: 8px
+}
+
+
+
+.saved-notes {
+margin-top: 20px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+}
