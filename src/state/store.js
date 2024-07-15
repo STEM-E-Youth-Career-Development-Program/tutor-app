@@ -9,5 +9,5 @@ export const store = configureStore({
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(tutorsSlice.middleware),
+    getDefaultMiddleware().concat(tutorsSlice.middleware).concat(studentsSlice.middleware),
 })

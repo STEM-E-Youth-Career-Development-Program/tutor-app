@@ -40,7 +40,7 @@ function App() {
                         <Route path="/view-students" element={<ViewStudents />} />
                         <Route path="/view-tutors" element={<ViewTutors />} />
                         <Route path="*" element={<NoPage />} />
-                        <Route path="/view-student-info" element={<ViewStudentInfo/>} />
+                        <Route path="/view-student-info/:id" element={<ViewStudentInfo />} />
                         <Route path="/view-tutor-info/:id" element={<ViewTutorInfo />} />
                         {/* http://localhost:3000/view-tutor-info/cfAaRMmT03OPHo1kvvmN */}
                     </>

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./ViewStudentInfo.css";
+import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
+import { useParams } from "react-router-dom"
 
 function LeftStats() {
     return (
@@ -51,18 +53,19 @@ function LeftStats() {
     );
 }
 
-function RightStats() {
-    const [notes, setNotes] = useState("");
-    const [savedNotes, setSavedNotes] = useState("");
+function RightStats({ student, studentId }) {
+
+    const [notes, setNotes] = useState(student.notes);
 
     const handleInputChange = (event) => {
         setNotes(event.target.value);
     };
 
-    const handleSaveNotes = () => {
-        setSavedNotes(notes);
-        // Here you can also add functionality to save the notes to a database or another storage
-    };
+    const [updateStudent] = useUpdateStudentByIdMutation();
+    const updateNotes = (event) => {
+        updateStudent({ ...student, id: studentId, notes: notes })
+    }
+
 
     return (
         <div className="student-stats-parent">
@@ -93,26 +96,29 @@ function RightStats() {
             <p>Notes:</p>
             <div className="notesbox">
                 <textarea value={notes} onChange={handleInputChange} placeholder="Enter notes here..." />
-                <button onClick={handleSaveNotes}>Save Notes</button>
-                {savedNotes && (
+                <button onClick={updateNotes}>Save Notes</button>
+                {/* {savedNotes && (
                     <div className="saved-notes">
                         <p><b>Saved Notes:</b></p>
                         <p>{savedNotes}</p>
                     </div>
-                )}
+                )} */}
             </div>
         </div>
     );
 }
 
 function ViewStudentInfo() {
-    return (
+    const { id } = useParams();
+    const { data: student, isLoading, isError } = useGetStudentByIdQuery(id);
+
+    return student === undefined ? "Loading" : (
         <>
             <h1 className="view-student-info-h1">Student Name</h1>
             <p className="view-student-info-h2">Tutored by Assigned Tutor Name</p>
             <div className="view-students-info-box">
                 <LeftStats />
-                <RightStats />
+                <RightStats student={student} studentId={id} />
             </div>
         </>
     );
