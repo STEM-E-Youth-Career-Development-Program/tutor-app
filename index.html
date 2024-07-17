@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .available {
+            background-color: #00ff00;
+        }
+        .unavailable {
+            background-color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th></th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </tr>
+        <tr>
+            <td>Morning</td>
+            <td class="available"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+        </tr>
+        <tr>
+            <td>Afternoon</td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+        </tr>
+        <tr>
+            <td>Evening</td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+            <td class="available"></td>
+            <td class="unavailable"></td>
+        </tr>
+    </table>
+    <p>Legend:</p>
+    <ul>
+        <li><span class="available">Available</span></li>
+        <li><span class="unavailable">Unavailable</span></li>
+    </ul>
+</body>
+</html>
