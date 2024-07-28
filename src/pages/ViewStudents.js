@@ -32,7 +32,7 @@ function SortOptions({ filters, setFilters }) {
                     <br />
                     <div className="Dropdowndiv">
                         <ul className="cols-2">
-                            {['Newly Signed Up', 'Update Needed', 'Unmatched Student', 'Currently being Tutored', 'Matching in Progress', 'No Longer a Student'].map((status) => (
+                            {['currentlyTutoring', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
                                 <li key={status}>
                                     <CheckboxElement label={status} onChange={() => handleCheckboxChange('status', status)} />
                                 </li>
@@ -57,7 +57,7 @@ function SortOptions({ filters, setFilters }) {
                     Grade
                     <br />
                     <div className="Dropdowndiv">
-                        {['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth'].map((grade) => (
+                        {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'].map((grade) => (
                             <div key={grade}>
                                 <input type="checkbox" name={grade} value={grade} onChange={() => handleCheckboxChange('grades', grade)} />
                                 <label htmlFor={grade}>{grade}</label>
@@ -84,13 +84,15 @@ function SortOptions({ filters, setFilters }) {
     );
 }
 
-function StudentRow({ name, status, tutor, subjects }) {
+function StudentRow({ name, status, tutor, subjects, grade, timezone }) {
     return (
         <tr>
             <td>{name}</td>
             <td>{status}</td>
             <td>{tutor}</td>
             <td>{subjects}</td>
+            <td>{grade}</td>
+            <td>{timezone}</td>
         </tr>
     );
 }
@@ -104,7 +106,7 @@ function ViewStudents() {
     });
 
     const students = [
-        { name: "John Doe", status: "Matching in Progress", tutor: "Mr. Smith", subjects: "Math", grade: "First", timezone: "EST" },
+        { name: "John Doe", status: "matchingInProgress", tutor: "Mr. Smith", subjects: "Math", grade: "1", timezone: "EST" },
         // Add more student objects here
     ];
 
@@ -126,6 +128,8 @@ function ViewStudents() {
                         <th>Status</th>
                         <th>Tutor</th>
                         <th>Subjects</th>
+                        <th>Grade</th>
+                        <th>Timezone</th>
                     </tr>
                 </thead>
                 <tbody>
