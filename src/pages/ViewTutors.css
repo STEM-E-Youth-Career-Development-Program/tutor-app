@@ -112,3 +112,11 @@
   background-color: #45a049; 
 }
 
+#tutorStatus {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+}

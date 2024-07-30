@@ -1,3 +1,50 @@
+.tutor-stats-parent,.availability-section{
+    background-color: lightgray;
+    border-radius: 25px;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    text-align: left;
+    flex: 1;
+}
+
+.view-tutor-info-box{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+h1{
+    margin-bottom: 0px;
+    font-size: xxx-large;
+}
+
+
+.view-tutor-info-h2 {
+    margin-top: 0px;
+    padding-left: 50px;
+    padding-top: 50px;
+}
+
+p2 {
+    color: red;
+    text-decoration: underline;
+}
+
+p3 {
+    font-size: small;
+}
+
+p4 {
+    font-size: small;
+}
+
+p5 {
+    font-weight: normal;
+}
+
+
 .availability-table {
     width: 100%;
     border-collapse: collapse;
@@ -7,9 +54,10 @@
 .availability-table th,
 .availability-table td {
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 5px;
     text-align: center;
     width: calc(100% / 8); 
+    font-size: 10pt;
 }
 
 .day-headings th {
@@ -44,6 +92,6 @@
     background-color: green;
 }
 
-.Unavailable {
+.unavailable {
     background-color: #ccc;
 }
