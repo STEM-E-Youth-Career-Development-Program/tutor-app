@@ -1,127 +1,145 @@
+import React, { useState } from 'react';
 import "./ViewStudents.css";
 import { useId } from 'react';
 
-function CheckboxElement(props) {
-    const id = useId()
-    return <>
-        <label for={id}>{props.label}</label>
-        <input type="checkbox" id={id} />
-    </>
+function CheckboxElement({ label, onChange }) {
+    const id = useId();
+    return (
+        <>
+            <label htmlFor={id}>{label}</label>
+            <input type="checkbox" id={id} onChange={onChange} />
+        </>
+    );
 }
 
-function SortOptions() {
-    return <> 
-        
-<div class="dropdown">
-    <span class="drop">Sort Options</span>
-    <div class="dropdown-content"> 
-    <div class= "StatusSection"> Status
-        <br />
-        <div class="Dropdowndiv">
-            <ul className="cols-2">
-                <li><CheckboxElement label="Newly Signed Up" /></li>
-                <li><CheckboxElement label="Update Needed" /></li>
-                <li><CheckboxElement label="Unmatched Student" /></li>
-                <li><CheckboxElement label="Currently being Tutored" /></li>
-                <li><CheckboxElement label="Matching in Progress" /></li>
-                <li><CheckboxElement label="No Longer a Student" /></li>
-            </ul>
-        </div>
-    </div>
-        <div class="SubjectsSection">
-            Subjects
-            <br></br>
-            <div class="Dropdowndiv">
-                <input type="checkbox" name="Math" value="Math"></input>
-                <span class="checkmark"></span>
-                <label for="Math">Math</label>
-                <br></br>
-                <input type="checkbox" name="Science" value="Science"></input>
-                <label for="Science">Science</label>
-                <br></br>
-                <input type="checkbox" name="English" value="English"></input>
-                <label for="English">English</label>
-                <br></br>
+function SortOptions({ filters, setFilters }) {
+    const handleCheckboxChange = (category, value) => {
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [category]: {
+                ...prevFilters[category],
+                [value]: !prevFilters[category][value]
+            }
+        }));
+    };
+
+    return (
+        <div className="dropdown">
+            <span className="drop">Sort Options</span>
+            <div className="dropdown-content">
+                <div className="StatusSection">
+                    Status
+                    <br />
+                    <div className="Dropdowndiv">
+                        <ul className="cols-2">
+                            {['currentlyTutoring', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
+                                <li key={status}>
+                                    <CheckboxElement label={status} onChange={() => handleCheckboxChange('status', status)} />
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+                <div className="SubjectsSection">
+                    Subjects
+                    <br />
+                    <div className="Dropdowndiv">
+                        {['Math', 'Science', 'English'].map((subject) => (
+                            <div key={subject}>
+                                <input type="checkbox" name={subject} value={subject} onChange={() => handleCheckboxChange('subjects', subject)} />
+                                <label htmlFor={subject}>{subject}</label>
+                                <br />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="GradeSection">
+                    Grade
+                    <br />
+                    <div className="Dropdowndiv">
+                        {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'].map((grade) => (
+                            <div key={grade}>
+                                <input type="checkbox" name={grade} value={grade} onChange={() => handleCheckboxChange('grades', grade)} />
+                                <label htmlFor={grade}>{grade}</label>
+                                <br />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="TimezoneSection">
+                    Timezone
+                    <br />
+                    <div className="Dropdowndiv">
+                        {['EST', 'PST', 'CST', 'MT'].map((timezone) => (
+                            <div key={timezone}>
+                                <input type="checkbox" name={timezone} value={timezone} onChange={() => handleCheckboxChange('timezones', timezone)} />
+                                <label htmlFor={timezone}>{timezone}</label>
+                                <br />
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
-    </div>
-    <div class="GradeSection">Grade
-        <br></br>
-        <div class="Dropdowndiv">
-            <input type="checkbox" name="First" value="First"></input>
-            <label for="First">1st</label>
-            <input type="checkbox" name="Second" value="Second"></input>
-            <label for="Second">2nd</label>
-            <input type="checkbox" name="Third" value="Third"></input>
-            <label for="Third">3rd</label>
-            <input type="checkbox" name="Fourth" value="Fourth"></input>
-            <label for="Fourth">4th</label>
-            <input type="checkbox" name="Fifth" value="Fifth"></input>
-            <label for="Fifth">5th</label>
-            <input type="checkbox" name="Sixth" value="Sixth"></input>
-            <label for="Sixth">6th</label>
-            <input type="checkbox" name="Seventh" value="Seventh"></input>
-            <label for="Seventh">7th</label>
-            <input type="checkbox" name="Eight" value="Eight"></input>
-            <label for="Eighth">8th</label>
-            <input type="checkbox" name="Ninth" value="Ninth"></input>
-            <label for="Ninth">9th</label>
-            <input type="checkbox" name="Tenth" value="Tenth"></input>
-            <label for="Tenth">10th</label>
-            <input type="checkbox" name="Eleventh" valuediv="Eleventh"></input>
-            <label for="Eleventh">11th</label>
-            <input type="checkbox" name="Twelfth" value="Twelfth"></input>
-            <label for="Twelfth">12th</label>
         </div>
-    </div>
-    <div class="TimezoneSection">Timezone</div>
-        {/* <br></br> */}
-        <div class="Dropdowndiv">
-            <input type="checkbox" name="EST" value="EST"></input>
-            <label for="EST">EST</label>
-            <input type="checkbox" name="PST" value="PST"></input>
-            <label for="PST">PST</label>
-            <input type="checkbox" name="CST" value="CST"></input>
-            <label for="CST">CST</label>
-            <input type="checkbox" name="MT" value="MT"></input>
-            <label for="MT">MT</label>
-        </div>
-    </div>
-</div>
-
-        {/* <select class="dropdown">
-            <option disabled selected> Sort Options</option>
-        </select> */}
-    </>
-    
+    );
 }
 
-function TutorRow({ name, status, numStudents, maxStudents, subjects }) {
-    return <tr>
-        <th>{name}</th>
-        <td>{status}</td>
-        <td>{numStudents}</td>
-        <td>{maxStudents}</td>
-        <td>{subjects}</td>
-    </tr>
+function StudentRow({ name, status, tutor, subjects, grade, timezone }) {
+    return (
+        <tr>
+            <td>{name}</td>
+            <td>{status}</td>
+            <td>{tutor}</td>
+            <td>{subjects}</td>
+            <td>{grade}</td>
+            <td>{timezone}</td>
+        </tr>
+    );
 }
 
 function ViewStudents() {
-    return <>
-        <SortOptions />
+    const [filters, setFilters] = useState({
+        status: {},
+        subjects: {},
+        grades: {},
+        timezones: {}
+    });
 
-        <table class="viewtable">
-            <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th># of Students</th>
-                <th>Max Students</th>
-                <th>Subjects</th>
-            </tr>
-            <TutorRow name="John Doe" status="Matching" numStudents={0} maxStudents={15} subjects={"Math"} />
-        </table>
-    </>
+    const students = [
+        { name: "John Doe", status: "matchingInProgress", tutor: "Mr. Smith", subjects: "Math", grade: "1", timezone: "EST" },
+        // Add more student objects here
+    ];
 
+    const filteredStudents = students.filter(student => {
+        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key);
+        const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || student.subjects.includes(key));
+        const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || student.grade === key);
+        const timezonesMatch = Object.keys(filters.timezones).every(key => !filters.timezones[key] || student.timezone === key);
+        return statusMatch && subjectsMatch && gradesMatch && timezonesMatch;
+    });
+
+    return (
+        <>
+            <SortOptions filters={filters} setFilters={setFilters} />
+            <table className="viewtable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Tutor</th>
+                        <th>Subjects</th>
+                        <th>Grade</th>
+                        <th>Timezone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredStudents.map((student, index) => (
+                        <StudentRow key={index} {...student} />
+                    ))}
+                </tbody>
+            </table>
+        </>
+    );
 }
-
 
 export default ViewStudents;
