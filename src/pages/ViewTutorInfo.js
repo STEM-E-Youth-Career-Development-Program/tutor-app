@@ -1,5 +1,6 @@
 import "./ViewTutorInfo.css";
 import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
+
 import { useParams } from "react-router-dom"
 
 /**
@@ -125,7 +126,39 @@ function AvailabilityChart() {
         </div>
     );
 }
-
+function RightStats({ tutor }) {
+    return (
+        <div className="tutor-right-stats">
+        <h3>Current Tutees:</h3>
+        <table className="tutees-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Student Age</th>
+                    <th>Student Grade Level</th>
+                    <th>Subjects Tutored</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>David</td>
+                    <td>12</td>
+                    <td>7</td>
+                    <td>Math</td>
+                </tr>
+                <tr>
+                    <td>Sally</td>
+                    <td>13</td>
+                    <td>7</td>
+                    <td>Science, English</td>
+                </tr>
+               
+            </tbody>
+        </table>
+        <p className="edit-tutees"><a href="#">Edit Tutees</a></p>
+    </div>
+    );
+}
 function ViewTutorInfo() {;
     const { id } = useParams();
     const { data: tutor, isLoading, isError } = useGetTutorByIdQuery(id);
@@ -134,9 +167,8 @@ function ViewTutorInfo() {;
         <h1 className="view-tutor-info-h2">{tutor.firstName} {tutor.lastName}</h1>
         <div className="view-tutor-info-box">
             <LeftStats tutor={tutor} tutorId={id}/>
-            <div className="availability-section">
-                
-            </div>
+            <RightStats tutor={tutor}/>
+            
         </div>
     </>
 
