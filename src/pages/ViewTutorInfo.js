@@ -1,5 +1,6 @@
 import "./ViewTutorInfo.css";
 import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
+import { useGetStudentByIdQuery } from "../state/studentsSlice";
 
 import { useParams } from "react-router-dom"
 
@@ -127,41 +128,54 @@ function AvailabilityChart() {
     );
 }
 function RightStats({ tutor }) {
+    
+    // Temporarily add the specific student ID for testing purposes
+    const studentIds = tutor.students.length > 0 ? tutor.students : ["leFaNrKmmcXWjr6RvIPb"];
+
     return (
         <div className="tutor-right-stats">
-        <h3>Current Tutees:</h3>
-        <table className="tutees-table">
-            <thead>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Student Age</th>
-                    <th>Student Grade Level</th>
-                    <th>Subjects Tutored</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>David</td>
-                    <td>12</td>
-                    <td>7</td>
-                    <td>Math</td>
-                </tr>
-                <tr>
-                    <td>Sally</td>
-                    <td>13</td>
-                    <td>7</td>
-                    <td>Science, English</td>
-                </tr>
-               
-            </tbody>
-        </table>
-        <p className="edit-tutees"><a href="#">Edit Tutees</a></p>
-    </div>
+            <h3>Current Tutees:</h3>
+            <table className="tutees-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student Age</th>
+                        <th>Student Grade Level</th>
+                        <th>Subjects Tutored</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {studentIds.map((studentId) => (
+                        <StudentRow key={studentId} studentId={studentId} />
+                    ))}
+                </tbody>
+            </table>
+            <p className="edit-tutees"><a href="#">Edit Tutees</a></p>
+        </div>
+    );
+}
+
+
+function StudentRow({ studentId }) {
+    const { data: student, isLoading, isError } = useGetStudentByIdQuery(studentId);
+
+    if (isLoading) return <tr><td colSpan="4">Loading...</td></tr>;
+    if (isError) return <tr><td colSpan="4">Failed to load student data</td></tr>;
+
+    return (
+        <tr>
+            <td>{student.firstName} {student.lastName}</td>
+            <td>{student.age}</td>
+            <td>{student.grade}</td>
+            <td>{[...student.mathSubjects, ...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects].join(", ") || "N/A"}</td>
+        </tr>
     );
 }
 function ViewTutorInfo() {;
     const { id } = useParams();
     const { data: tutor, isLoading, isError } = useGetTutorByIdQuery(id);
+   
+    
 
     return isError ? `Failed to find tutor with id ${id}` : isLoading ? "Loading..." : <>
         <h1 className="view-tutor-info-h2">{tutor.firstName} {tutor.lastName}</h1>

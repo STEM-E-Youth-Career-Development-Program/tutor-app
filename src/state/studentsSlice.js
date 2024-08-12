@@ -21,7 +21,6 @@ import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
  *  with days 0-6 where 0 is Sunday and slots 0-2 where 0 is morning (before noon), 1 is afternoon (noon-5pm), and 2 is evening (after 5pm)
  * @property {boolean} inPerson Whether the tutor is available in person; if virtual is also true, no preference was specified
  * @property {boolean} virtual Whether the tutor is available virtually; if inPerson is also true, no preference was specified
- * 
  * @property {string} legalGuardianFirstName
  * @property {string} legalGuardianLastName
  * @property {string} legalGuardianHomeAddress

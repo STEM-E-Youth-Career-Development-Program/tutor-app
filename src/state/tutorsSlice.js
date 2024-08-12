@@ -28,7 +28,7 @@ import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, qu
  * @property {string[]} socialStudiesSubjects
  * @property {string[]} miscSubjects
  * @property {string} otherSubjects
- * 
+ * @property {string[]} students 
  * @property {string} numStudentsRange
  * @property {string} numHoursRange
  * 
