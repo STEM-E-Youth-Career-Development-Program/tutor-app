@@ -3,10 +3,18 @@ import "./ViewStudentInfo.css";
 import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
 import { useParams } from "react-router-dom"
 
-function LeftStats() {
+function LeftStats({ student, studentId }) {
+    const [updateStudent] = useUpdateStudentByIdMutation();
+    const updateStudentStatus = (event) => {
+        updateStudent({ ...student, id: studentId, status: event.target.value })
+    }
+    let subjects = student.mathSubjects;
+    subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, ...student.otherSubjects);
+
+    //Age, parent email,nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
     return (
         <div className="student-stats-parent">
-            <p><b>Status: Here</b></p>
+            <p><b>Status: </b> {student.status}</p>
             <div className="dropdown">
                 <span className="dropdownbutton"><a href="">Change Status</a></span>
                 <div className="dropdown-content">
@@ -14,41 +22,41 @@ function LeftStats() {
                         <br />
                         <div className="Dropdowndiv">
                             <label htmlFor="First">Newly Signed Up</label>
-                            <input type="button" name="First" value="Newly" /><br />
+                            <input type="button" name="First" onClick={updateStudentStatus} value={"newlySignedUp"} /><br />
                             <label htmlFor="Second">Update Needed</label>
-                            <input type="button" name="Second" value="Update" /><br />
+                            <input type="button" name="Second" onClick={updateStudentStatus} value={"updateNeeded"} /><br />
                             <label htmlFor="Third">Unmatched Student</label>
-                            <input type="button" name="Third" value="Unmatched" /><br />
-                            <label htmlFor="Fourth">Currently being Tutoring</label>
-                            <input type="button" name="Fourth" value="Currently" /><br />
+                            <input type="button" name="Third" onClick={updateStudentStatus} value={"unmatched"} /><br />
+                            <label htmlFor="Fourth">Currently being tutored</label>
+                            <input type="button" name="Fourth" onClick={updateStudentStatus} value={"currentlyTutored"} /><br />
                             <label htmlFor="Fifth">Matching In Progress</label>
-                            <input type="button" name="Fifth" value="Matching" /><br />
+                            <input type="button" name="Fifth" onClick={updateStudentStatus} value={"matchingInProgress"} /><br />
                             <label htmlFor="Sixth">No Longer a Student</label>
-                            <input type="button" name="Sixth" value="Gone" />
+                            <input type="button" name="Sixth" onClick={updateStudentStatus} value={"noLongerStudent"} />
                         </div>
                     </div>
                 </div>
             </div>
             <br />
-            <b>Age: 17</b>
+            <b>Age: </b> {student.age} 
             <br />
-            <b>Grade: 12th</b>
+            <b>Grade: </b> {student.grade}
             <br />
-            <b>Subjects: Science, Math</b>
+            <b>Subjects: </b> {subjects.join(", ")}
             <br />
-            <b>Virtual or In-Person: Virtual</b>
+            <b>Virtual or In-Person: </b> {student.inPerson && student.virtual ? "No preference" : student.inPerson ? "In-Person" : "Virtual"}
             <br />
-            <b>Contact Information: asdfasdfasdf@gmail.com</b>
+            <b>Contact Information: </b> {student.email}
             <br />
-            <a href="mailto:info@steme.org">Send an Email</a>
+            <a href={"mailto:" + student.email}>Send an Email</a>
             <br />
-            <b>Parent Email: asdfasdfasdf@gmail.com</b>
+            <b>Parent Email: </b> {student.legalGuardianEmail}
             <br />
-            <a href="mailto:info@steme.org">Send an Email</a>
+            <a href={"mailto:" + student.legalGuardianEmail}>Send an Email</a>
             <br />
-            <b>Emergency Contact: jlkasjdfkljad@gmail.com</b>
+            <b>Emergency Contact: </b> {student.emergencyContactEmail}
             <br />
-            <a href="mailto:info@steme.org">Send an Email</a>
+            <a href={"mailto:" + student.emergencyContactEmail}>Send an Email</a>
         </div>
     );
 }
@@ -117,7 +125,7 @@ function ViewStudentInfo() {
             <h1 className="view-student-info-h1">Student Name</h1>
             <p className="view-student-info-h2">Tutored by Assigned Tutor Name</p>
             <div className="view-students-info-box">
-                <LeftStats />
+                <LeftStats student={student} studentId={id} />
                 <RightStats student={student} studentId={id} />
             </div>
         </>
