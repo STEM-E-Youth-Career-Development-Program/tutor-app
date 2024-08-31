@@ -8,9 +8,14 @@ function LeftStats({ student, studentId }) {
     const updateStudentStatus = (event) => {
         updateStudent({ ...student, id: studentId, status: event.target.value })
     }
-    let subjects = student.mathSubjects;
-    subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, ...student.otherSubjects);
-
+    const attributes = ["mathSubjects", "englishSubjects", "socialStudiesSubjects", "miscSubjects", "otherSubjects"];
+    let subjects = [];
+    for (let i = 0; i < attributes.length; i++) {
+        console.log(student[attributes[i]]);
+        if (student[attributes[i]].length !== 0) {
+            subjects.push(...student[attributes[i]]);
+        }
+    }
     //Age, parent email,nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
     return (
         <div className="student-stats-parent">
@@ -38,8 +43,6 @@ function LeftStats({ student, studentId }) {
                 </div>
             </div>
             <br />
-            <b>Age: </b> {student.age} 
-            <br />
             <b>Grade: </b> {student.grade}
             <br />
             <b>Subjects: </b> {subjects.join(", ")}
@@ -50,13 +53,7 @@ function LeftStats({ student, studentId }) {
             <br />
             <a href={"mailto:" + student.email}>Send an Email</a>
             <br />
-            <b>Parent Email: </b> {student.legalGuardianEmail}
-            <br />
-            <a href={"mailto:" + student.legalGuardianEmail}>Send an Email</a>
-            <br />
-            <b>Emergency Contact: </b> {student.emergencyContactEmail}
-            <br />
-            <a href={"mailto:" + student.emergencyContactEmail}>Send an Email</a>
+            <b>Parent phone number: </b> {student.legalGuardianPhoneNumber}
         </div>
     );
 }
