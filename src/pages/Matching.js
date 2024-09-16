@@ -1,6 +1,6 @@
 import React from "react";
 import "./Matching.css";
-import { useGetStudentByIdQuery } from "../state/studentsSlice";
+import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
 import { useGetAvailableTutorsQuery } from "../state/tutorsSlice";
 import { useParams } from "react-router-dom";
 
@@ -57,10 +57,22 @@ function Matching() {
     });
 
     // Function to handle matching
-    const handleMatch = (tutorId) => {
-        alert(
-            `Tutor matched with student ${student.firstName} ${student.lastName}`
-        );
+    const handleMatch = async (tutorId) => {
+        try{
+            alert(`Congrats! Tutor matched with student ${student.firstName} ${student.lastName}`);
+        } catch (error){
+            console.error("Failed to update student:", error);
+            alert("Error matching tutor with student. Please try again.");
+        }
+        
+
+        /*
+        Add tutor to student.tutors
+        useUpdateStudentByIdMutation(
+            'studentId': studentId,
+            studentData: {...studentData, ["tutors"]: ...studentData["tutors"], tutorId }
+        })
+        */
     };
 
     return (

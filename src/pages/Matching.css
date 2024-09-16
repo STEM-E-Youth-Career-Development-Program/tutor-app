@@ -1,0 +1,35 @@
+table, th, td {
+    border: 1px solid grey;
+    border-collapse: collapse;
+    padding:0.4rem;
+}
+table {
+    margin-top: 3.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    border-top: 3px solid darkgreen;
+}
+th {
+    background-color: #ebebeb;
+    color: dimgray;
+    text-align: left;
+}
+h1 {
+    margin: 2rem;
+}
+button {
+    border: none;
+    border-radius: 20px;
+    background-color: #5478b3;
+    font-size: x-small;
+    color:white;
+    padding: 0.5rem 1rem;
+    transition-duration: 0.5s;ack
+button:hover{
+    background-color: #3d5987;
+}ground-color: #6e90b8;
+    border-radius: 10px;
+    border: none;
+    font-size: x-small;
+}
