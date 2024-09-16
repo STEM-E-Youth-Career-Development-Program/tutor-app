@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Dashboard.css"
 import { useFirebaseApp } from "../FirebaseAppContext";
+import { Link, useNavigate } from "react-router-dom";
 
 import { getFirestore, getDocs, collection, query, where } from "firebase/firestore";
 import { useGetNumberOfTutorsQuery } from "../state/tutorsSlice";
@@ -28,7 +29,7 @@ function Statistics() {
     return <div className="stats-parent">
         <div>
             <h1>
-                {numberUnmatchedStudents} Unmatched Students<br />{data} Avaliable Tutors
+                {numberUnmatchedStudents} Unmatched Students<br />{data} Available Tutors
             </h1>    
         </div>
     </div>
@@ -36,17 +37,17 @@ function Statistics() {
 
 function ViewButton1(){
     return(
-        <button>
+        <button><Link to="/view-tutors" style={{"color":"inherit", "textDecoration":"inherit"}}>
             View Tutors
-        </button>
+        </Link></button>
     );
 }
 
 function ViewButton2(){
     return(
-        <button>
+        <button><Link to="/view-tutors" style={{"color":"inherit", "textDecoration":"inherit"}}>
             View Students
-        </button>
+        </Link></button>
     );
 }
 
