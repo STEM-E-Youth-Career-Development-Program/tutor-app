@@ -3,7 +3,7 @@ import "./index.css";
 
 export default function NavBar({ user, setUser }) {
     const navigate = useNavigate();
-    const exampleStudentId = "1";
+    const exampleStudentId = "leFaNrKmmcXWjr6RvIPb";
 
     return (
         <>

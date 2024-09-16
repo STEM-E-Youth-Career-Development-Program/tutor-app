@@ -1,23 +1,33 @@
 import React from "react";
 import "./Matching.css";
 import { useGetStudentByIdQuery } from "../state/studentsSlice";
-import {
-    useGetNumberOfAvailableTutorsQuery,
-    useGetTutorByIdQuery,
-} from "../state/tutorsSlice";
+import { useGetAvailableTutorsQuery } from "../state/tutorsSlice";
 import { useParams } from "react-router-dom";
 
 function Matching() {
     const { id: studentId } = useParams();
-    const { data: student, isLoading: studentLoading } =
-        useGetStudentByIdQuery(studentId);
-    const { data: availableTutors, isLoading: tutorsLoading } =
-        useGetNumberOfAvailableTutorsQuery();
+    const {
+        data: student,
+        isLoading: studentLoading,
+        error: studentError,
+    } = useGetStudentByIdQuery(studentId);
+    const {
+        data: availableTutors,
+        isLoading: tutorsLoading,
+        error: tutorsError,
+    } = useGetAvailableTutorsQuery();
 
+    // Debugging statements
+    console.log("Student:", student);
+    console.log("Available Tutors:", availableTutors);
     if (studentLoading || tutorsLoading) {
         return <div>Loading...</div>;
     }
-
+    if (studentError || tutorsError) {
+        return (
+            <div>Error: {studentError?.message || tutorsError?.message}</div>
+        );
+    }
     if (!student) {
         return <div>Student not found.</div>;
     }
@@ -46,6 +56,13 @@ function Matching() {
         );
     });
 
+    // Function to handle matching
+    const handleMatch = (tutorId) => {
+        alert(
+            `Tutor matched with student ${student.firstName} ${student.lastName}`
+        );
+    };
+
     return (
         <div className="matching-page">
             <h1>
@@ -56,36 +73,37 @@ function Matching() {
                     <thead>
                         <tr>
                             <th>Tutor Name</th>
-                            <th>Email</th>
-                            <th>Availability</th>
-                            <th>Preferred Subjects</th>
+                            <th># of Students</th>
+                            <th>Max Students</th>
+                            <th>Subjects</th>
                             <th>City</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTutors.map((tutor) => (
+                        {availableTutors.map((tutor) => (
                             <tr key={tutor.id}>
                                 <td>
                                     {tutor.firstName} {tutor.lastName}
                                 </td>
-                                <td>{tutor.email}</td>
-                                <td>
-                                    {tutor.availability
-                                        .map((available, index) =>
-                                            available ? `${index} ` : ""
-                                        )
-                                        .join(", ")}
-                                </td>
+                                <td>{tutor.numStudents}</td>
+                                <td>{tutor.maxStudents}</td>
                                 <td>
                                     {[
-                                        ...tutor.mathSubjects,
-                                        ...tutor.scienceSubjects,
-                                        ...tutor.englishSubjects,
-                                        ...tutor.socialStudiesSubjects,
-                                        ...tutor.miscSubjects,
+                                        ...(tutor.mathSubjects || []),
+                                        ...(tutor.scienceSubjects || []),
+                                        ...(tutor.englishSubjects || []),
+                                        ...(tutor.socialStudiesSubjects || []),
+                                        ...(tutor.miscSubjects || []),
                                     ].join(", ")}
                                 </td>
                                 <td>{tutor.city}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleMatch(tutor.id)}
+                                    >
+                                        Match
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
