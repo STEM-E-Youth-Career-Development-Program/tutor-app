@@ -8,6 +8,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom"
 
+import { firebaseApp } from "../firebaseApp";
+import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+
+
 /**
  * @typedef {import("../state/tutorsSlice").TutorData} TutorData  
  */
@@ -141,8 +145,7 @@ function ViewTutorInfo() {
         <div className="view-tutor-info-box">
             <LeftStats tutor={tutor} tutorId={id} />
             <div className="availability-section">
-                <StudentsSlider studentIds={{ ...tutor.students, leFaNrKmmcXWjr6RvIPb: { subjectsTutored: "Geometry" } }} />
-                {/* meant to pass in only tutor.students, but since tutor.students is currently empty, adding test student id manually */}
+                <StudentsSlider studentIds={{ ...tutor.students }} />
                 {/* tutor.students may not have been meant to be a list of objects. is there another way to know which subjects the tutor has the student for?*/}
             </div>
         </div>
@@ -152,15 +155,12 @@ function ViewTutorInfo() {
 
 
 function StudentsSlider({ studentIds }) {
-    // studentData is meant to be a copy of tutor.students
-    // currently studentData is augmented by hard-coded students for showing multiple sets of slides and other features
-
     //integer for setting number of student cards available on web page for responsiveness to window size 
     const [nSlides, setNSlides] = useState(slideCount)
 
     //list for storing all student objects
-    //meant to be initialized as []
-    const [studentData, setStudentData] = useState(hardCodedStudentData)
+    //will start as a copy of tutor.students
+    const [studentData, setStudentData] = useState({})
 
     //boolean for toggling visibility of studentData editors
     const [showEditors, setShowEditors] = useState(false)
@@ -187,31 +187,28 @@ function StudentsSlider({ studentIds }) {
         setStudentData(prevList => ({ ...addition, ...prevList }))
     }, [])
 
-    //each time student changes, it is added to studentData
-    //to check if the student exists, its first name has been used here, assuming every student object has a first name other than the default 'Student'
-    //using isError to check if student exists was not working since it changes to its default state False after some time, allowing undefined students to be added
-    useEffect(() => {
-        if (!isLoading && newStudentId !== "") {
-            if (newStudentId === "leFaNrKmmcXWjr6RvIPb" || student.firstName !== "Student") {
-                if (studentIds[newStudentId].subjectsTutored) { //must retrieve subjectsTutored from studentIds since not included in student object 
-                    addToStudentData({ [newStudentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": studentIds[newStudentId].subjectsTutored } })
-                }
-                else {
-                    addToStudentData({ [newStudentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade } })
-                }
+    const checkStudentExists = useCallback(async (studentId) => {
+        const db = getFirestore(firebaseApp)
+        const docRef = doc(db, "students", studentId)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            if (studentId in studentIds && 'subjectsTutored' in studentIds[studentId]) { //must retrieve subjectsTutored from studentIds since not included in student object 
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": studentIds[studentId].subjectsTutored } })
             }
             else {
-                if (newStudentId !== "") {
-                    alert(String(newStudentId) + " not found")
-                }
-                //must change newStudentId to keep alert from repeating
-                setNewStudentId("")
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade } })
             }
+        } else {
+            alert(String(studentId) + " not found")
+            setNewStudentId("")
         }
-        else {
-            setAddStudentInput("loading")
+    }, [student, addToStudentData])
+
+    useEffect(() => {
+        if (!isLoading && newStudentId !== "") {
+            checkStudentExists(newStudentId)
         }
-    }, [student, isLoading, newStudentId, studentIds, addToStudentData])
+    }, [isLoading, newStudentId, checkStudentExists])
 
     const handleResize = () => {
         setNSlides(slideCount())
@@ -229,36 +226,65 @@ function StudentsSlider({ studentIds }) {
         }
         else {
             return 3
-        } 
+        }
     }
 
     //INACTIVE
     //supposed to be called on clicking Upload Edits button
     //updates tutor.students to the student Ids and subjectsTutored visible in studentData
     //currently updating in {studentId} : {subjectsTutored} : studentData[studentId][subjectsTutored] format
-    function UploadEdits() {
-        const { id } = useParams()
-        useUpdateTutorByIdMutation({
-            tutorId: id,
-            tutorData: Object.fromEntries(
-                Object.entries(studentData).map(([studentId, studentInfo]) => [
-                    studentId,
-                    { ["subjectsTutored"]: studentInfo["subjectsTutored"] }
-                ])
-            )
-        })
-    }
+    // function UploadEdits() {
+    //     const { id } = useParams()
+    //     useUpdateTutorByIdMutation({
+    //         tutorId: id,
+    //         tutorData: Object.fromEntries(
+    //             Object.entries(studentData).map(([studentId, studentInfo]) => [
+    //                 studentId,
+    //                 { ["subjectsTutored"]: studentInfo["subjectsTutored"] }
+    //             ])
+    //         )
+    //     })
+    // }
 
     const settings = {
-        dots: false,
+        dots: true,
+        centerMode: false,
         infinite: false,
         speed: 500,
-        slidesToShow: nSlides,
-        slidesToScroll: nSlides
+        slidesToShow: Math.max(Math.min(nSlides, Object.keys(studentData).length), 2),
+        slidesToScroll: nSlides,
+        centerPadding: 0,
+        prevArrow: <SliderPrevArrow />,
+        nextArrow: <SliderNextArrow />
+    }
+
+
+    //customizing arrows to make them more visible
+    //even though on start the arrows may look like they have 0.5 opacity, once there are enough slides in the slider for there to be multiple panes, when the arrows become active, their opacity changes to 1.0 and appearance to black 
+    function SliderNextArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div
+                className={className}
+                style={{ ...style, display: "block", filter: "brightness(0%)", transform: 'scale(2)' }}
+                onClick={onClick}
+            />
+        );
+    }
+
+    function SliderPrevArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div
+                className={className}
+                style={{ ...style, display: "block", filter: "brightness(0%)", transform: 'scale(2)' }}
+                onClick={onClick}
+            />
+        );
     }
 
     return (
-        <div style={{ "marginLeft": "1rem", "marginRight": "1rem" }}>
+        <div style={{ "marginLeft": "1rem", "marginRight": "1rem", "marginTop": "1rem" }}>
             <Slider {...settings}>
                 {
                     Object.entries(studentData).map(([studentId, studentInfo]) => (
@@ -284,12 +310,12 @@ function StudentsSlider({ studentIds }) {
                 <>
                     <div style={{ "display": "flex", "flex-direction": "column" }}>
                         <div>
-                            <button onClick={() => console.log("inactivated") /*uploadEdits*/} style={{ "fontSize": "1.25rem", "color": "gray" }}>&#9888; Upload edits</button>
+                            <button title="currently inactive" /*onClick = {() => uploadEdits()}*/ style={{ "fontSize": "1.25rem", "color": "gray" }}>&#9888; Upload edits</button>
                         </div>
                         <br></br>
                         <div class="add-student">
                             <input placeholder="Student Id" onChange={(e) => setAddStudentInput(e.target.value)} style={{ "flex": "1" }}></input>
-                            <button onClick={() => setNewStudentId(addStudentInput)} style={{ "cursor": "pointer", "flex-basis": "30%", "fontSize":"1rem", "backgroundColor":"#ffca54" }}>Add Student</button>
+                            <button onClick={() => setNewStudentId(addStudentInput)} style={{ "cursor": "pointer", "flex-basis": "30%", "fontSize": "1rem", "backgroundColor": "#ffca54" }}>Add Student</button>
                         </div>
                         <br></br>
                         {Object.entries(studentData).map(([studentId, studentInfo]) => (
@@ -315,44 +341,6 @@ function StudentsSlider({ studentIds }) {
             }
         </div>
     );
-}
-
-let hardCodedStudentData = {
-    key1:
-    {
-        name: `Louie`,
-        age: 15,
-        grade: 9,
-        subjectsTutored: "Math"
-    },
-    key2:
-    {
-        name: `Sam`,
-        age: 14,
-        grade: 8,
-        subjectsTutored: "History"
-    },
-    key3:
-    {
-        name: `David`,
-        age: 12,
-        grade: 9,
-        subjectsTutored: "Math"
-    },
-    key4:
-    {
-        name: `Sally`,
-        age: 13,
-        grade: 9,
-        subjectsTutored: "Science, English, Math"
-    },
-    key5:
-    {
-        name: `Emma`,
-        age: 13,
-        grade: 8,
-        subjectsTutored: "Math, English"
-    },
 }
 
 export default ViewTutorInfo;
