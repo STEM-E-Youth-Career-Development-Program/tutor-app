@@ -35,27 +35,19 @@ function Statistics() {
     </div>
 }
 
-function ViewButton1(){
+function ViewButton({ to, title }){
     return(
-        <button><Link to="/view-tutors" style={{"color":"inherit", "textDecoration":"inherit"}}>
-            View Tutors
-        </Link></button>
-    );
-}
-
-function ViewButton2(){
-    return(
-        <button><Link to="/view-tutors" style={{"color":"inherit", "textDecoration":"inherit"}}>
-            View Students
-        </Link></button>
+        <Link to={to}>
+            {title}
+        </Link>
     );
 }
 
 function ViewBody() {
     return(
         <div className="view-parent">
-            <ViewButton1 />
-            <ViewButton2 />
+            <ViewButton to="/view-tutors" title="View Tutors" />
+            <ViewButton to="/view-students" title="View Students" />
         </div>
     );
 }
