@@ -10,6 +10,7 @@ import { getFirestore, getDoc, setDoc, collection, where, getCountFromServer, qu
  * @property {string} lastName
  * @property {boolean} attendedOrientation
  * @property {string} tutorManager // Note: this may change
+ * @property {string[]} students // Note: this may change
  * @property {string} notes
  * @property {string} status
  * @property {number} lastUpdated timestamp (seconds since epoch)
