@@ -1,6 +1,6 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { firebaseApp } from "../firebaseApp";
-import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+import { getFirestore, getDoc, setDoc, doc, collection, getDocs } from "firebase/firestore";
 
 // TODO: Caching
 
@@ -94,11 +94,31 @@ const studentsSlice = createApi({
             },
             invalidatesTags: ["Tutors"]
         }),
+
+        getAvailableStudents: builder.query({
+            async queryFn() {
+                const db = getFirestore(firebaseApp);
+                const studentsCollection = collection(db, "students");
+
+                try {
+                    const snapshot = await getDocs(studentsCollection);
+                    const students = snapshot.docs.map((doc) => ({
+                        id: doc.id, // Include the document ID
+                        ...doc.data(), // Spread the document data
+                    }));
+                    return { data: students };
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+            providesTags: ["Students"],
+        }),
     })
 })
 
-export const { 
+export const {
     useGetStudentByIdQuery,
     useUpdateStudentByIdMutation,
+    useGetAvailableStudentsQuery,
 } = studentsSlice
 export default studentsSlice;
