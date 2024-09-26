@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "./ViewStudents.css";
 import { useId } from 'react';
+import { useGetAvailableStudentsQuery } from "../state/studentsSlice";
 
 function CheckboxElement({ label, onChange }) {
     const id = useId();
@@ -84,10 +85,11 @@ function SortOptions({ filters, setFilters }) {
     );
 }
 
-function StudentRow({ name, status, tutor, subjects, grade, timezone }) {
+function StudentRow({ name, status, tutor, subjects, grade, timezone, id }) {
+    var link = `/view-student-info/${id}`;
     return (
         <tr>
-            <td>{name}</td>
+            <td><a href={link}>{name}</a></td>
             <td>{status}</td>
             <td>{tutor}</td>
             <td>{subjects}</td>
@@ -105,10 +107,34 @@ function ViewStudents() {
         timezones: {}
     });
 
-    const students = [
-        { name: "John Doe", status: "matchingInProgress", tutor: "Mr. Smith", subjects: "Math", grade: "1", timezone: "EST" },
-        // Add more student objects here
-    ];
+    const students = [];
+    const { data: student, isLoading, isError } = useGetAvailableStudentsQuery();
+    const topics = ["mathSubjects", "scienceSubjects", "englishSubjects", "socialStudiesSubjects", "miscSubjects", "otherSubjects"];
+    if (!isLoading && !isError) {
+        student.forEach((doc) => {
+            let subjects = [];
+            let subjectTopics = [];
+            topics.forEach((topic) => {
+                if (doc[topic]) {
+                    if (doc[topic].length >= 1) {
+                        subjects.push(...doc[topic]);
+                        subjectTopics.push(topic.slice(0, -8));
+                    }
+                }
+            });
+            if (doc["availability"]) {
+                var count = 0;
+                doc["availability"].forEach((val) => {
+                    if (!val) {
+                        count++;
+                    }
+                });
+                students.push({ "name": doc["firstName"] + doc["lastName"], "status": doc["status"], "numStudents": count, "maxStudents": doc["availability"].length, "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"], "id": doc["id"] });
+            } else {
+                students.push({ "name": doc["firstName"] + doc["lastName"], "status": doc["status"], "numStudents": "N/A", "maxStudents": "N/A", "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"], "id": doc["id"] });
+            }
+        });
+    }
 
     const filteredStudents = students.filter(student => {
         const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key);
