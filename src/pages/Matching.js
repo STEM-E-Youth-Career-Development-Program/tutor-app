@@ -1,7 +1,8 @@
 import React from "react";
 import "./Matching.css";
 import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
-import { useGetAvailableTutorsQuery } from "../state/tutorsSlice";
+import { useGetAvailableTutorsQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 function Matching() {
@@ -16,6 +17,10 @@ function Matching() {
         isLoading: tutorsLoading,
         error: tutorsError,
     } = useGetAvailableTutorsQuery();
+
+    const [updateStudent] = useUpdateStudentByIdMutation();
+    const [updateTutor] = useUpdateTutorByIdMutation();
+    const navigate = useNavigate();
 
     // Debugging statements
     console.log("Student:", student);
@@ -58,12 +63,18 @@ function Matching() {
 
     // Function to handle matching
     const handleMatch = async (tutorId) => {
-        try{
-            alert(`Congrats! Tutor matched with student ${student.firstName} ${student.lastName}`);
-        } catch (error){
-            console.error("Failed to update student:", error);
-            alert("Error matching tutor with student. Please try again.");
-        }
+        updateStudent({
+            id: studentId,
+            tutors: [new Set([...(student.tutors ?? []), tutorId])],
+        })
+
+        updateTutor({
+            id: tutorId,
+            tutors: [new Set([...(student.tutors ?? []), tutorId])],
+        })
+
+        // redirect to Student Profile
+        navigate(`/view-student-info/${studentId}`);
         
 
         /*
