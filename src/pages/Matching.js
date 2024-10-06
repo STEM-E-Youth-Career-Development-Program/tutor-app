@@ -1,7 +1,13 @@
 import React from "react";
 import "./Matching.css";
-import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
-import { useGetAvailableTutorsQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
+import {
+    useGetStudentByIdQuery,
+    useUpdateStudentByIdMutation,
+} from "../state/studentsSlice";
+import {
+    useGetAvailableTutorsQuery,
+    useUpdateTutorByIdMutation,
+} from "../state/tutorsSlice";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
@@ -66,16 +72,15 @@ function Matching() {
         updateStudent({
             id: studentId,
             tutors: [new Set([...(student.tutors ?? []), tutorId])],
-        })
+        });
 
         updateTutor({
             id: tutorId,
             tutors: [new Set([...(student.tutors ?? []), tutorId])],
-        })
+        });
 
         // redirect to Student Profile
         navigate(`/view-student-info/${studentId}`);
-        
 
         /*
         Add tutor to student.tutors
@@ -106,7 +111,12 @@ function Matching() {
                         {availableTutors.map((tutor) => (
                             <tr key={tutor.id}>
                                 <td>
-                                    {tutor.firstName} {tutor.lastName}
+                                    <a
+                                        href={`/view-tutor-info/${tutor.id}`}
+                                        target="_blank"
+                                    >
+                                        {tutor.firstName} {tutor.lastName}
+                                    </a>
                                 </td>
                                 <td>{tutor.numStudents}</td>
                                 <td>{tutor.maxStudents}</td>
