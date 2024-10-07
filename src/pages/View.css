@@ -1,0 +1,101 @@
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+  .Dropdowndiv{
+    display: flex;
+    flex-flow: row wrap;
+    font-size: small;
+  }
+  .Dropdowndiv div{
+      flex: 1 0 21%;
+      margin: 5px;
+  }
+  .Dropdowndiv span{
+      display: flex;
+      flex: 1 0 50%;
+  }
+  .checkmark {
+    border-width: 4px;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 450px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    font-size: small;
+    border-radius: 15px
+  }
+  
+  .Section{
+      border: 1px solid LightSteelBlue;
+      border-radius: 15px;
+      font-weight: bold; 
+      font-size: 15pt;
+      margin: 1rem 0rem;
+      padding: 0.7rem;
+      color: dimgray;
+  }
+  .Section label {
+      font-weight: normal;
+      font-size: 12pt;
+      color: black;
+  }
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .dropdownTable {
+    border: 0px;
+  }
+
+.viewtable {
+    width: 80%;
+    margin: 2rem 10%;
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+.viewtable * {
+    border: 1px solid;
+}
+
+.viewtable * * {
+    border: 1px solid;
+    padding: 5px;
+    text-align: left;  
+}
+
+.drop {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #0051ff; 
+  color: white; 
+  font-weight: bold; 
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px; 
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.drop:hover {
+  background-color: LightSteelBlue; 
+}
+
+#tutorStatus {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+}

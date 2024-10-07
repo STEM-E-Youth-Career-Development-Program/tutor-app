@@ -1,14 +1,24 @@
-import "./ViewTutors.css";
+import "./View.css";
 import React, { useId, useState } from 'react';
 import { useGetAvailableTutorsQuery } from '../state/tutorsSlice';
+const labels={
+    "newTutor": "New Tutor",
+    "currentlyTutoring": "Currently Tutoring",
+    "matchingInProgress": "Matching in Progress",
+    "tempInactive": "Temporarily Inactive",
+    "noLongerTutor": "No Longer a Tutor",
+    "needsMoreStudents": "Awaiting more students",
+    "awaitingUpdate": "Update needed",
+    "allSpotsFilled": "All spots filled"
+};
 
 function CheckboxElement({ label, onChange }) {
     const id = useId();
     return (
-        <>
-            <label htmlFor={id}>{label}</label>
+        <span>
             <input type="checkbox" id={id} onChange={onChange} />
-        </>
+            <label htmlFor={id}>{label}</label>
+        </span>
     );
 }
 
@@ -27,20 +37,16 @@ function SortOptions({ filters, setFilters }) {
         <div className="dropdown">
             <span className="drop">Sort Options</span>
             <div className="dropdown-content">
-                <div className="StatusSection">
+                <div className="Section">
                     Status
                     <br />
                     <div className="Dropdowndiv">
-                        <ul className="cols-2">
-                            {['newTutor', 'currentlyTutoring', 'matchingInProgress', 'tempInactive', 'noLongerTutor', 'needsMoreStudents', 'awaitingUpdate', 'allSpotsFilled'].map((status) => (
-                                <li key={status}>
-                                    <CheckboxElement label={status} onChange={() => handleCheckboxChange('status', status)} />
-                                </li>
-                            ))}
-                        </ul>
+                        {['newTutor', 'currentlyTutoring', 'matchingInProgress', 'tempInactive', 'noLongerTutor', 'needsMoreStudents', 'awaitingUpdate', 'allSpotsFilled'].map((status) => (
+                               <CheckboxElement label={labels[status]} onChange={() => handleCheckboxChange('status', status)} />
+                        ))}
                     </div>
                 </div>
-                <div className="SubjectsSection">
+                <div className="Section">
                     Subjects
                     <br />
                     <div className="Dropdowndiv">
@@ -53,7 +59,7 @@ function SortOptions({ filters, setFilters }) {
                         ))}
                     </div>
                 </div>
-                <div className="GradeSection">
+                <div className="Section">
                     Grade
                     <br />
                     <div className="Dropdowndiv">
@@ -66,7 +72,7 @@ function SortOptions({ filters, setFilters }) {
                         ))}
                     </div>
                 </div>
-                <div className="TimezoneSection">
+                <div className="Section">
                     Timezone
                     <br />
                     <div className="Dropdowndiv">
