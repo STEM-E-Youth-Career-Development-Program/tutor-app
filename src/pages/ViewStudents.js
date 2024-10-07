@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import "./ViewStudents.css";
+import "./View.css";
 import { useId } from 'react';
 import { useGetAvailableStudentsQuery } from "../state/studentsSlice";
+const labels = {
+    "matched": "Matched with Tutor",
+    "matchingInProgress": "Matching In Progress",
+    "unmatched": "Not matched with Tutor",
+    "updateNeeded": "Update Needed"
+};
 
 function CheckboxElement({ label, onChange }) {
     const id = useId();
     return (
-        <>
-            <label htmlFor={id}>{label}</label>
+        <span>
             <input type="checkbox" id={id} onChange={onChange} />
-        </>
+            <label htmlFor={id}>{label}</label>
+        </span>
     );
 }
 
@@ -28,20 +34,16 @@ function SortOptions({ filters, setFilters }) {
         <div className="dropdown">
             <span className="drop">Sort Options</span>
             <div className="dropdown-content">
-                <div className="StatusSection">
+                <div className="Section">
                     Status
                     <br />
                     <div className="Dropdowndiv">
-                        <ul className="cols-2">
-                            {['currentlyTutoring', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
-                                <li key={status}>
-                                    <CheckboxElement label={status} onChange={() => handleCheckboxChange('status', status)} />
-                                </li>
+                            {['matched', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
+                                <CheckboxElement label={labels[status]} onChange={() => handleCheckboxChange('status', status)} />
                             ))}
-                        </ul>
                     </div>
                 </div>
-                <div className="SubjectsSection">
+                <div className="Section">
                     Subjects
                     <br />
                     <div className="Dropdowndiv">
@@ -54,7 +56,7 @@ function SortOptions({ filters, setFilters }) {
                         ))}
                     </div>
                 </div>
-                <div className="GradeSection">
+                <div className="Section">
                     Grade
                     <br />
                     <div className="Dropdowndiv">
@@ -67,7 +69,7 @@ function SortOptions({ filters, setFilters }) {
                         ))}
                     </div>
                 </div>
-                <div className="TimezoneSection">
+                <div className="Section">
                     Timezone
                     <br />
                     <div className="Dropdowndiv">
