@@ -51,7 +51,7 @@ function LeftStats({ tutor, tutorId }){
             <a href={"mailto:" + tutor.email}><p3>SEND AN EMAIL</p3></a>
             <br></br>
             <br></br>
-            <b>Number of Tutees: </b> {numStudents} TODO
+            <b>Number of Tutees: </b> {tutor.numStudents} TODO
             <br></br>
             <br></br>
             <b>Availibility:</b>
