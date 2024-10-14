@@ -3,7 +3,7 @@ import "./Matching.css";
 import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
 import { useGetAvailableTutorsQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
 import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom"; // Import Link for navigation
 
 function Matching() {
     const { id: studentId } = useParams();
@@ -22,7 +22,6 @@ function Matching() {
     const [updateTutor] = useUpdateTutorByIdMutation();
     const navigate = useNavigate();
 
-    // Debugging statements
     console.log("Student:", student);
     console.log("Available Tutors:", availableTutors);
     if (studentLoading || tutorsLoading) {
@@ -61,29 +60,18 @@ function Matching() {
         );
     });
 
-    // Function to handle matching
     const handleMatch = async (tutorId) => {
-        updateStudent({
+        await updateStudent({
             id: studentId,
-            tutors: [new Set([...(student.tutors ?? []), tutorId])],
-        })
+            tutors: [...(student.tutors ?? []), tutorId],
+        });
 
-        updateTutor({
+        await updateTutor({
             id: tutorId,
-            tutors: [new Set([...(student.tutors ?? []), tutorId])],
-        })
+            students: [...(availableTutors.find(t => t.id === tutorId).students ?? []), studentId],
+        });
 
-        // redirect to Student Profile
         navigate(`/view-student-info/${studentId}`);
-        
-
-        /*
-        Add tutor to student.tutors
-        useUpdateStudentByIdMutation(
-            'studentId': studentId,
-            studentData: {...studentData, ["tutors"]: ...studentData["tutors"], tutorId }
-        })
-        */
     };
 
     return (
@@ -103,10 +91,12 @@ function Matching() {
                         </tr>
                     </thead>
                     <tbody>
-                        {availableTutors.map((tutor) => (
+                        {filteredTutors.map((tutor) => (
                             <tr key={tutor.id}>
                                 <td>
-                                    {tutor.firstName} {tutor.lastName}
+                                    <Link to={`/tutor/${tutor.id}`}> 
+                                        {tutor.firstName} {tutor.lastName}
+                                    </Link>
                                 </td>
                                 <td>{tutor.numStudents}</td>
                                 <td>{tutor.maxStudents}</td>
