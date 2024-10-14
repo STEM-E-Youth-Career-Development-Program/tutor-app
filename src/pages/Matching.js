@@ -60,15 +60,17 @@ function Matching() {
         );
     });
 
-    const handleMatch = async (tutorId) => {
+    const handleMatch = async (tutor) => {
         await updateStudent({
+            ...student,
             id: studentId,
-            tutors: [...(student.tutors ?? []), tutorId],
+            tutors: [...(student.tutors ?? []), tutor.id],
         });
 
         await updateTutor({
-            id: tutorId,
-            students: [...(availableTutors.find(t => t.id === tutorId).students ?? []), studentId],
+            ...tutor,
+            id: tutor.id,
+            students: [...(tutor.students ?? []), studentId],
         });
 
         navigate(`/view-student-info/${studentId}`);
@@ -112,7 +114,7 @@ function Matching() {
                                 <td>{tutor.city}</td>
                                 <td>
                                     <button
-                                        onClick={() => handleMatch(tutor.id)}
+                                        onClick={() => handleMatch(tutor)}
                                     >
                                         Match
                                     </button>
