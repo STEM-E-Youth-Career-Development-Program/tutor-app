@@ -63,12 +63,14 @@ function Matching() {
     const handleMatch = async (tutor) => {
         await updateStudent({
             ...student,
+            status: "matchingInProgress",
             id: studentId,
             tutors: [...(student.tutors ?? []), tutor.id],
         });
 
         await updateTutor({
             ...tutor,
+            status: "matchingInProgress",
             id: tutor.id,
             students: [...(tutor.students ?? []), studentId],
         });
