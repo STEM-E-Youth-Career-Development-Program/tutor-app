@@ -13,8 +13,15 @@ import { useParams } from "react-router-dom"
  * @param {TutorData} params.tutor 
  * @returns {React.JSX.Element}
  */
+function countTutees(tutorId) {
+    return tutees.filter(student => student.tutorId === tutorId).length;
+}
+
+const numStudents = countTutees(tutorId);
+
 function LeftStats({ tutor, tutorId }){
     const [updateTutor] = useUpdateTutorByIdMutation();
+    const numStudents = countTutees(tutor.id);
     const updateTutorStatus = (event) => {
         updateTutor({ ...tutor, id: tutorId, status: event.target.value })
     }
@@ -51,7 +58,7 @@ function LeftStats({ tutor, tutorId }){
             <a href={"mailto:" + tutor.email}><p3>SEND AN EMAIL</p3></a>
             <br></br>
             <br></br>
-            <b>Number of Tutees: </b> {tutor.numStudents} TODO
+            <b>Number of Tutees: </b> {numStudents}
             <br></br>
             <br></br>
             <b>Availibility:</b>
