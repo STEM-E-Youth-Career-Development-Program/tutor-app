@@ -38,25 +38,35 @@ function Matching() {
 
     const filteredTutors = availableTutors.filter((tutor) => {
         return (
-            (!student.inPerson || tutor.inPerson) &&
-            (!student.virtual || tutor.virtual) &&
-            student.mathSubjects.some((subject) =>
-                tutor.mathSubjects.includes(subject)
-            ) &&
-            student.scienceSubjects.some((subject) =>
-                tutor.scienceSubjects.includes(subject)
-            ) &&
-            student.englishSubjects.some((subject) =>
-                tutor.englishSubjects.includes(subject)
-            ) &&
-            student.socialStudiesSubjects.some((subject) =>
-                tutor.socialStudiesSubjects.includes(subject)
-            ) &&
-            student.miscSubjects.some((subject) =>
-                tutor.miscSubjects.includes(subject)
-            ) &&
-            (!student.prefersHomeworkHelp || tutor.prefersHomeworkHelp) &&
-            (!student.prefersSubjectHelp || tutor.prefersSubjectHelp)
+            // In-person and virtual preferences (only check if student's preference exists)
+            (!student.inPerson || tutor.inPerson === student.inPerson) &&
+            (!student.virtual || tutor.virtual === student.virtual) &&
+            // Subject matching (only check if the student has subjects defined)
+            (!student.mathSubjects?.length ||
+                student.mathSubjects.some((subject) =>
+                    tutor.mathSubjects?.includes(subject)
+                )) &&
+            (!student.scienceSubjects?.length ||
+                student.scienceSubjects.some((subject) =>
+                    tutor.scienceSubjects?.includes(subject)
+                )) &&
+            (!student.englishSubjects?.length ||
+                student.englishSubjects.some((subject) =>
+                    tutor.englishSubjects?.includes(subject)
+                )) &&
+            (!student.socialStudiesSubjects?.length ||
+                student.socialStudiesSubjects.some((subject) =>
+                    tutor.socialStudiesSubjects?.includes(subject)
+                )) &&
+            (!student.miscSubjects?.length ||
+                student.miscSubjects.some((subject) =>
+                    tutor.miscSubjects?.includes(subject)
+                )) &&
+            // Preference for homework or subject help (only check if student's preference exists)
+            (!student.prefersHomeworkHelp ||
+                tutor.prefersHomeworkHelp === student.prefersHomeworkHelp) &&
+            (!student.prefersSubjectHelp ||
+                tutor.prefersSubjectHelp === student.prefersSubjectHelp)
         );
     });
 
@@ -91,7 +101,7 @@ function Matching() {
                         </tr>
                     </thead>
                     <tbody>
-                        {availableTutors.map((tutor) => (
+                        {filteredTutors.map((tutor) => (
                             <tr key={tutor.id}>
                                 <td>
                                     <Link to={`/view-tutor-info/${tutor.id}`}> 
