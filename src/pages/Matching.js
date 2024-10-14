@@ -91,10 +91,10 @@ function Matching() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTutors.map((tutor) => (
+                        {availableTutors.map((tutor) => (
                             <tr key={tutor.id}>
                                 <td>
-                                    <Link to={`/tutor/${tutor.id}`}> 
+                                    <Link to={`/view-tutor-info/${tutor.id}`}> 
                                         {tutor.firstName} {tutor.lastName}
                                     </Link>
                                 </td>
