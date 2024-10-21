@@ -95,3 +95,18 @@ p5 {
 .unavailable {
     background-color: #ccc;
 }
+
+.tutees-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; 
+}
+
+.tutees-table th,
+.tutees-table td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+    width: calc(100% / 8); 
+    font-size: 10pt;
+}
