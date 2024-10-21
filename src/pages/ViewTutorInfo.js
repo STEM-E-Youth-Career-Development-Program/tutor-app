@@ -126,6 +126,26 @@ function AvailabilityChart() {
     );
 }
 
+function LinksTable() {
+    return (
+        <div className="tutees-table">
+            <table>
+                <tr>
+                    <th>StudentName</th>
+                    <th>Student Age</th>
+                    <th>Student Grade Level</th>
+                    <th>Subjects Tutored</th>
+                </tr>
+                <tr>
+                    <td>
+                        <Link to="../view-student-info/leFaNrKmmcXWjr6RvIPb">Student 1</Link>
+                    </td>                
+                </tr>
+            </table>
+        </div>
+    )
+}
+
 function ViewTutorInfo() {;
     const { id } = useParams();
     const { data: tutor, isLoading, isError } = useGetTutorByIdQuery(id);
