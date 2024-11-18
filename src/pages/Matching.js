@@ -9,7 +9,7 @@ import {
     useUpdateTutorByIdMutation,
 } from "../state/tutorsSlice";
 import { useNavigate } from "react-router-dom";
-import { useParams, Link } from "react-router-dom"; // Import Link for navigation
+import { useParams, Link } from "react-router-dom";
 
 function Matching() {
     const { id: studentId } = useParams();
@@ -28,8 +28,6 @@ function Matching() {
     const [updateTutor] = useUpdateTutorByIdMutation();
     const navigate = useNavigate();
 
-    console.log("Student:", student);
-    console.log("Available Tutors:", availableTutors);
     if (studentLoading || tutorsLoading) {
         return <div>Loading...</div>;
     }
@@ -42,39 +40,75 @@ function Matching() {
         return <div>Student not found.</div>;
     }
 
-    const filteredTutors = availableTutors.filter((tutor) => {
-        return (
-            // In-person and virtual preferences (only check if student's preference exists)
-            (!student.inPerson || tutor.inPerson === student.inPerson) &&
-            (!student.virtual || tutor.virtual === student.virtual) &&
-            // Subject matching (only check if the student has subjects defined)
-            (!student.mathSubjects?.length ||
-                student.mathSubjects.some((subject) =>
-                    tutor.mathSubjects?.includes(subject)
-                )) &&
-            (!student.scienceSubjects?.length ||
-                student.scienceSubjects.some((subject) =>
-                    tutor.scienceSubjects?.includes(subject)
-                )) &&
-            (!student.englishSubjects?.length ||
-                student.englishSubjects.some((subject) =>
-                    tutor.englishSubjects?.includes(subject)
-                )) &&
-            (!student.socialStudiesSubjects?.length ||
-                student.socialStudiesSubjects.some((subject) =>
-                    tutor.socialStudiesSubjects?.includes(subject)
-                )) &&
-            (!student.miscSubjects?.length ||
-                student.miscSubjects.some((subject) =>
-                    tutor.miscSubjects?.includes(subject)
-                )) &&
-            // Preference for homework or subject help (only check if student's preference exists)
-            (!student.prefersHomeworkHelp ||
-                tutor.prefersHomeworkHelp === student.prefersHomeworkHelp) &&
-            (!student.prefersSubjectHelp ||
-                tutor.prefersSubjectHelp === student.prefersSubjectHelp)
-        );
-    });
+    // Ranking system: Assign a score to each tutor based on how well they match the student's preferences
+    const rankedTutors = availableTutors
+        .map((tutor) => {
+            let score = 0;
+
+            // In-person and virtual preferences
+            if (
+                student.inPerson !== undefined &&
+                student.inPerson === tutor.inPerson
+            ) {
+                score += 10; // Add points if the in-person preference matches
+            }
+            if (
+                student.virtual !== undefined &&
+                student.virtual === tutor.virtual
+            ) {
+                score += 10; // Add points if the virtual preference matches
+            }
+
+            // Subject matching: Add points for each subject category match
+            if (student.mathSubjects?.length) {
+                score +=
+                    student.mathSubjects.filter((subject) =>
+                        tutor.mathSubjects?.includes(subject)
+                    ).length * 5; // 5 points per matching subject
+            }
+            if (student.scienceSubjects?.length) {
+                score +=
+                    student.scienceSubjects.filter((subject) =>
+                        tutor.scienceSubjects?.includes(subject)
+                    ).length * 5;
+            }
+            if (student.englishSubjects?.length) {
+                score +=
+                    student.englishSubjects.filter((subject) =>
+                        tutor.englishSubjects?.includes(subject)
+                    ).length * 5;
+            }
+            if (student.socialStudiesSubjects?.length) {
+                score +=
+                    student.socialStudiesSubjects.filter((subject) =>
+                        tutor.socialStudiesSubjects?.includes(subject)
+                    ).length * 5;
+            }
+            if (student.miscSubjects?.length) {
+                score +=
+                    student.miscSubjects.filter((subject) =>
+                        tutor.miscSubjects?.includes(subject)
+                    ).length * 5;
+            }
+
+            // Preference for homework or subject help
+            if (
+                student.prefersHomeworkHelp !== undefined &&
+                student.prefersHomeworkHelp === tutor.prefersHomeworkHelp
+            ) {
+                score += 10;
+            }
+            if (
+                student.prefersSubjectHelp !== undefined &&
+                student.prefersSubjectHelp === tutor.prefersSubjectHelp
+            ) {
+                score += 10;
+            }
+
+            // Return tutor with their calculated score
+            return { ...tutor, score };
+        })
+        .sort((a, b) => b.score - a.score); // Sort tutors by score in descending order
 
     const handleMatch = async (tutorId) => {
         await updateStudent({
@@ -108,10 +142,11 @@ function Matching() {
                             <th>Max Students</th>
                             <th>Subjects</th>
                             <th>City</th>
+                            <th>Score</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTutors.map((tutor) => (
+                        {rankedTutors.map((tutor) => (
                             <tr key={tutor.id}>
                                 <td>
                                     <Link to={`/view-tutor-info/${tutor.id}`}>
@@ -130,6 +165,7 @@ function Matching() {
                                     ].join(", ")}
                                 </td>
                                 <td>{tutor.city}</td>
+                                <td>{tutor.score}</td>
                                 <td>
                                     <button
                                         onClick={() => handleMatch(tutor.id)}
