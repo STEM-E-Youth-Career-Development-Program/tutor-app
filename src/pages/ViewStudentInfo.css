@@ -1,10 +1,12 @@
-.student-stats-parent{
+.student-stats-parent,.availability-section{
     background-color: lightgray;
-    border-radius: 5%;
-    padding:1rem;
-    margin: 3rem;
-    width: 40%;
+    border-radius: 25px;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
     text-align: left;
+    flex: 1;
 }
 
 .student-dropdown{

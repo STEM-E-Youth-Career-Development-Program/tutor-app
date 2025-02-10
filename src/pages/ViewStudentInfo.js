@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "./ViewStudentInfo.css";
-import "./ViewTutorInfo.css"
 import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
 import { useParams } from "react-router-dom"
+import Availability from "../components/Availability/Availability";
+import Status from "../components/Status.js";
 
 import AvailabilityTable from "../components/AvailabilityTable";
 
@@ -14,16 +15,12 @@ function LeftStats({ student, studentId }) {
     let subjects = [...student.mathSubjects];
     subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, ...student.otherSubjects);
 
-    //Age, parent email,nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
+    //Age, parent email, nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
     return (
-        <div className="tutor-stats-parent">
-            <p><b>Status: </b> 
-            <select onChange={updateStudentStatus} defaultValue={student.status}>
-                <option value={"matched"}>Matched</option>
-                <option value={"matchingInProgress"}>Matching in Progress</option>
-                <option value={"unmatched"}>Unmatched Student</option>
-                <option value={"updateNeeded"}>Update Needed</option>
-            </select></p>
+        <div className="student-stats-parent">
+            <p><b>Status: </b>
+            <Status person={student} onChange={updateStudentStatus} options={["Matched", "Matching in Progress", "Unmatched Student", "Update Needed"]}></Status>
+            </p>
             <b>Grade: </b> {student.grade}
             <br />
             <b>Subjects: </b> {subjects.join(", ")}
@@ -36,7 +33,8 @@ function LeftStats({ student, studentId }) {
 
             <br />
             <br />
-            <AvailabilityTable availability={student.availability} />
+            <Availability person={student} />
+
         </div>
     );
 }

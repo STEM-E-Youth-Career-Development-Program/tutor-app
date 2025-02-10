@@ -2,17 +2,9 @@ import "./ViewTutorInfo.css";
 import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
 import { useGetStudentByIdQuery } from "../state/studentsSlice";
 import { useParams } from "react-router-dom"
-import { React, useEffect, useCallback, useState } from 'react'
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { Link } from "react-router-dom"
 
-import { firebaseApp } from "../firebaseApp";
-import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
-
-
-import AvailabilityTable from "../components/AvailabilityTable";
+import Availability from "../components/Availability/Availability";
+import Status from "../components/Status.js";
 
 
 /**
@@ -34,13 +26,7 @@ function LeftStats({ tutor, tutorId }) {
         <div className="tutor-stats-parent">
             <b>Status: </b>
             {/* Update a tutor's status here */}
-            <select onChange={updateTutorStatus} defaultValue={tutor.status}>
-                <option value={"currentlyTutoring"}>Currently Tutoring</option>
-                <option value={"matchingInProgress"}>Matching in Progress</option>
-                <option value={"unmatched"}>Unmatched Tutor</option>
-                <option value={"updateNeeded"}>Update Needed</option>
-            </select>
-
+            <Status person={tutor} onChange={updateTutor} options={["Currently Tutoring", "Matching in Progress", "Unmatched Tutor", "Update Needed"]} />
             <br></br>
             <br></br>
             <b>Grade Level: </b> {tutor.grade}
@@ -67,95 +53,11 @@ function LeftStats({ tutor, tutorId }) {
             <br></br>
             <b>Availibility:</b>
             <br />
-            <AvailabilityTable availability={tutor.availability} />
+
+            <Availability person={tutor} />
+
         </div>
     </>
-}
-
-function Availability({ tutor }){
-    const isAvailable = (day, time) => {
-        return tutor.availability[3*day+time];
-    }
-
-    const getClassName = (day, time) => {
-        return isAvailable(day, time) ? "available" : "unavailable";
-    }
-
-    return <> 
-        <div class="availability-table">
-            <table>
-                <tr className="day-headings">
-                    <th scope="col"></th>
-                    <th scope="col">Mon</th>
-                    <th scope="col">Tue</th>
-                    <th scope="col">Wed</th>
-                    <th scope="col">Thu</th>
-                    <th scope="col">Fri</th>
-                    <th scope="col">Sat</th>
-                    <th scope="col">Sun</th>
-                </tr>
-                <tr>
-                    <th scope="row">Morning</th>
-                    <td className={getClassName(1,0)}></td>
-                    <td className={getClassName(2,0)}></td>
-                    <td className={getClassName(3,0)}></td>
-                    <td className={getClassName(4,0)}></td>
-                    <td className={getClassName(5,0)}></td>
-                    <td className={getClassName(6,0)}></td>
-                    <td className={getClassName(0,0)}></td>
-                </tr>
-                <tr>
-                    <th scope="row">Afternoon</th>
-                    <td className={getClassName(1,1)}></td>
-                    <td className={getClassName(2,1)}></td>
-                    <td className={getClassName(3,1)}></td>
-                    <td className={getClassName(4,1)}></td>
-                    <td className={getClassName(5,1)}></td>
-                    <td className={getClassName(6,1)}></td>
-                    <td className={getClassName(0,1)}></td>
-                </tr>
-                <tr>
-                    <th scope="row">Evening</th>
-                    <td className={getClassName(1,2)}></td>
-                    <td className={getClassName(2,2)}></td>
-                    <td className={getClassName(3,2)}></td>
-                    <td className={getClassName(4,2)}></td>
-                    <td className={getClassName(5,2)}></td>
-                    <td className={getClassName(6,2)}></td>
-                    <td className={getClassName(0,2)}></td>
-                </tr>
-            </table>
-        </div>
-    </>
-}
-
-function AvailabilityChart() {
-    return (
-        <div className="Headings">
-            <div className="heading-item available">Available</div>
-            <div className="heading-item unavailable">Unavailable</div>
-        </div>
-    );
-}
-
-function LinksTable() {
-    return (
-        <div className="tutees-table">
-            <table>
-                <tr>
-                    <th>StudentName</th>
-                    <th>Student Age</th>
-                    <th>Student Grade Level</th>
-                    <th>Subjects Tutored</th>
-                </tr>
-                <tr>
-                    <td>
-                        <Link to="../view-student-info/leFaNrKmmcXWjr6RvIPb">Student 1</Link>
-                    </td>                
-                </tr>
-            </table>
-        </div>
-    )
 }
 
 function ViewTutorInfo() {;
