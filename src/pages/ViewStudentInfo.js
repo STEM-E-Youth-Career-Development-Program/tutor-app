@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom"
 import Availability from "../components/Availability/Availability";
 import Status from "../components/Status.js";
 
+import AvailabilityTable from "../components/AvailabilityTable";
+
 function LeftStats({ student, studentId }) {
     const [updateStudent] = useUpdateStudentByIdMutation();
     const updateStudentStatus = (event) => {
@@ -32,6 +34,7 @@ function LeftStats({ student, studentId }) {
             <br />
             <br />
             <Availability person={student} />
+
         </div>
     );
 }

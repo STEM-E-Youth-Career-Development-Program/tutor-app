@@ -54,22 +54,24 @@ div.title{
   height: 100%;
 }
 
-.view-parent button {
+.view-parent button, .view-parent a {
   width: 12em;
   margin: 1em;
   height: 4em;
   border: 4px solid;
   border-color: rgba(21, 38, 188, 1);
   background-color: #4453DD;
-  font-family: serif;
   color: white;
   font-size: 30px;
   border-radius: 15px;
   justify-content: center;
   align-content: center;
+  display: inline-block;
+  text-decoration: none;
+  color: white;
 }
 
-.view-parent button:hover {
+.view-parent button:hover,.view-parent a:hover {
   opacity: 0.65;
   cursor: pointer;
 }
