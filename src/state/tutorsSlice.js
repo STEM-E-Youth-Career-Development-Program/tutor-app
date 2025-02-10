@@ -20,7 +20,9 @@ import {
  * @property {string} lastName
  * @property {boolean} attendedOrientation
  * @property {string} tutorManager // Note: this may change
- * @property {string[]} students the students' of the tutor (represented by their id)
+
+ * @property {string[]} students // Note: this may change
+
  * @property {string} notes
  * @property {string} status
  * @property {number} lastUpdated timestamp (seconds since epoch)
