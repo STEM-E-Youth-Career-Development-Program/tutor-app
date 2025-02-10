@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "react-router-dom"
-import "./index.css"
+import { Link, useNavigate } from "react-router-dom";
+import "./index.css";
 
-export default function NavBar({user, setUser}) {
-    const navigate = useNavigate()
+export default function NavBar({ user, setUser }) {
+    const navigate = useNavigate();
+    const exampleStudentId = "leFaNrKmmcXWjr6RvIPb";
 
     return <>
         <nav className="navbar">
@@ -22,3 +23,4 @@ export default function NavBar({user, setUser}) {
         </nav>
     </>
 }
+
