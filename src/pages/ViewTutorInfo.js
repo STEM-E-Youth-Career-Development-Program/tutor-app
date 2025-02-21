@@ -1,10 +1,15 @@
 import "./ViewTutorInfo.css";
 import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
 import { useGetStudentByIdQuery } from "../state/studentsSlice";
-import { useParams } from "react-router-dom"
+import { useParams,Link } from "react-router-dom"
+import { useState, useEffect, useCallback } from 'react';
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
 
 import Availability from "../components/Availability/Availability";
 import Status from "../components/Status.js";
+import { firebaseApp } from "../firebaseApp";
 
 
 /**
