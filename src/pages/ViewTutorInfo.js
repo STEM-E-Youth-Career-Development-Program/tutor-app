@@ -3,6 +3,11 @@ import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutor
 import { useGetStudentByIdQuery } from "../state/studentsSlice";
 
 import { useParams } from "react-router-dom"
+import { React, useEffect, useCallback, useState } from 'react'
+
+import { firebaseApp } from "../firebaseApp";
+import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+
 
 /**
  * @typedef {import("../state/tutorsSlice").TutorData} TutorData
@@ -16,14 +21,14 @@ import { useParams } from "react-router-dom"
 
 function LeftStats({ tutor, tutorId }){
     const [updateTutor] = useUpdateTutorByIdMutation();
-    const numStudents = countTutees(tutor.id);
     const updateTutorStatus = (event) => {
         updateTutor({ ...tutor, id: tutorId, status: event.target.value })
     }
-    function countTutees(tutorId) {
-        return tutees.filter(student => student.tutorId === tutorId).length;
-    }
-        const numStudents = countTutees(tutorId);
+    // function countTutees(tutorId) {
+    //     return tutees.filter(student => student.tutorId === tutorId).length;
+    // }
+    
+    const numStudents = Object.keys(tutor.students).length
 
     return <>
         <div className="tutor-stats-parent">
@@ -78,48 +83,50 @@ function Availability({ tutor }){
     }
 
     return <> 
-        <div class="availability-table">
+        <div className="availability-table">
             <table>
-                <tr className="day-headings">
-                    <th scope="col"></th>
-                    <th scope="col">Mon</th>
-                    <th scope="col">Tue</th>
-                    <th scope="col">Wed</th>
-                    <th scope="col">Thu</th>
-                    <th scope="col">Fri</th>
-                    <th scope="col">Sat</th>
-                    <th scope="col">Sun</th>
-                </tr>
-                <tr>
-                    <th scope="row">Morning</th>
-                    <td className={getClassName(1,0)}></td>
-                    <td className={getClassName(2,0)}></td>
-                    <td className={getClassName(3,0)}></td>
-                    <td className={getClassName(4,0)}></td>
-                    <td className={getClassName(5,0)}></td>
-                    <td className={getClassName(6,0)}></td>
-                    <td className={getClassName(0,0)}></td>
-                </tr>
-                <tr>
-                    <th scope="row">Afternoon</th>
-                    <td className={getClassName(1,1)}></td>
-                    <td className={getClassName(2,1)}></td>
-                    <td className={getClassName(3,1)}></td>
-                    <td className={getClassName(4,1)}></td>
-                    <td className={getClassName(5,1)}></td>
-                    <td className={getClassName(6,1)}></td>
-                    <td className={getClassName(0,1)}></td>
-                </tr>
-                <tr>
-                    <th scope="row">Evening</th>
-                    <td className={getClassName(1,2)}></td>
-                    <td className={getClassName(2,2)}></td>
-                    <td className={getClassName(3,2)}></td>
-                    <td className={getClassName(4,2)}></td>
-                    <td className={getClassName(5,2)}></td>
-                    <td className={getClassName(6,2)}></td>
-                    <td className={getClassName(0,2)}></td>
-                </tr>
+                <tbody>
+                    <tr className="day-headings">
+                        <th scope="col"></th>
+                        <th scope="col">Mon</th>
+                        <th scope="col">Tue</th>
+                        <th scope="col">Wed</th>
+                        <th scope="col">Thu</th>
+                        <th scope="col">Fri</th>
+                        <th scope="col">Sat</th>
+                        <th scope="col">Sun</th>
+                    </tr>
+                    <tr>
+                        <th scope="row">Morning</th>
+                        <td className={getClassName(1,0)}></td>
+                        <td className={getClassName(2,0)}></td>
+                        <td className={getClassName(3,0)}></td>
+                        <td className={getClassName(4,0)}></td>
+                        <td className={getClassName(5,0)}></td>
+                        <td className={getClassName(6,0)}></td>
+                        <td className={getClassName(0,0)}></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Afternoon</th>
+                        <td className={getClassName(1,1)}></td>
+                        <td className={getClassName(2,1)}></td>
+                        <td className={getClassName(3,1)}></td>
+                        <td className={getClassName(4,1)}></td>
+                        <td className={getClassName(5,1)}></td>
+                        <td className={getClassName(6,1)}></td>
+                        <td className={getClassName(0,1)}></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Evening</th>
+                        <td className={getClassName(1,2)}></td>
+                        <td className={getClassName(2,2)}></td>
+                        <td className={getClassName(3,2)}></td>
+                        <td className={getClassName(4,2)}></td>
+                        <td className={getClassName(5,2)}></td>
+                        <td className={getClassName(6,2)}></td>
+                        <td className={getClassName(0,2)}></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </>
@@ -134,13 +141,60 @@ function AvailabilityChart() {
     );
 }
 function RightStats({ tutor }) {
-    
+    const [showEditors, setShowEditors] = useState(false)
     // Temporarily add the specific student ID for testing purposes
-    const studentIds = tutor.students.length > 0 ? tutor.students : ["leFaNrKmmcXWjr6RvIPb"];
+    const [studentData, setStudentData] = useState({})
+
+    const [newStudentId, setNewStudentId] = useState("")
+
+    const { data: student, isError, isLoading } = useGetStudentByIdQuery(newStudentId)
+
+    useEffect(() => {
+        if(tutor.students.length !== 0) {
+            tutor.students.map((studentId, index) => {
+                setNewStudentId(String(studentId))
+            })
+        }
+        else {
+            setNewStudentId("leFaNrKmmcXWjr6RvIPb")
+        }
+    }, [tutor.students])
+    
+    const addToStudentData = useCallback((addition) => {
+        setStudentData(prevList => ({ ...addition, ...prevList }))
+        setAddStudentInput("")
+    }, [])
+
+    const checkStudentExists = useCallback(async (studentId) => {
+        const db = getFirestore(firebaseApp)
+        const docRef = doc(db, "students", studentId)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            if (studentId in tutor.students && 'subjectsTutored' in tutor.students[studentId]) { //must retrieve subjectsTutored from studentIds since not included in student object 
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": tutor.students[studentId].subjectsTutored } })
+            }
+            else {
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade } })
+            }
+        } else {
+            alert(String(studentId) + " not found")
+            setNewStudentId("")
+        }
+    }, [student, addToStudentData])
+
+    useEffect(() => {
+        if (!isLoading && newStudentId !== "") {
+            checkStudentExists(newStudentId)
+        }
+    }, [isLoading, newStudentId, checkStudentExists])
+
+    //the input in the 'Add Student' text field in Edit Students
+    const [addStudentInput, setAddStudentInput] = useState("")
+
 
     return (
         <div className="tutor-right-stats">
-            <h3>Current Tutees:</h3>
+            <h3>Current Tutees: {Object.keys(studentData).length}</h3>
             <table className="tutees-table">
                 <thead>
                     <tr>
@@ -151,14 +205,57 @@ function RightStats({ tutor }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {studentIds.map((studentId) => (
-                        <StudentRow key={studentId} studentId={studentId} />
-                    ))}
+                {Object.keys(studentData).map((name) => (
+                    <tr key={name}>
+                        <td>{name ? name : "N/A"}</td>
+                        <td>{studentData[name].age}</td>
+                        <td>{studentData[name].age}</td>
+                        <td>{studentData[name].age}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
-            <p className="edit-tutees"><a href="#">Edit Tutees</a></p>
+            <p className="edit-tutees" onClick={() => setShowEditors(!showEditors)}>Edit Tutees</p>
+        
+            {!showEditors ? null :
+                <>
+                    <div style={{ "display": "flex", "flex-direction": "column" }}>
+                        <div>
+                            <button title="currently inactive" style={{ "fontSize": "1.25rem", "color": "gray", "backgroundColor": "lightblue" }}>&#9888; Upload edits</button>
+                        </div>
+                        <br></br>
+                        <div class="add-student">
+                            <input placeholder="Student Id" onChange={(e) => setAddStudentInput(e.target.value)} style={{ "flex": "1" }}></input>
+                            <button onClick={() => setNewStudentId(addStudentInput)} style={{ "cursor": "pointer", "flex-basis": "30%", "fontSize": "1rem", "backgroundColor": "#ffca54" }}>Add Student</button>
+                        </div>
+                        <br></br>
+                        {Object.entries(studentData).map(([studentId, studentInfo]) => (
+                            <div key={`se${studentId}`} className="student-editor">
+                                <button onClick={() => { setStudentData(Object.fromEntries(Object.entries(studentData).filter(([k, v]) => k !== String(studentId)))) }}
+                                    style={{ "alignSelf": "end", "backgroundColor": "#FF5050", "fontSize": "0.9rem" }} >
+                                    &#9587; Delete
+                                </button>
+                                <div>
+                                    Name: {studentInfo["name"]}
+                                </div>
+                                <div>
+                                    Key: {studentId}
+                                </div>
+                                <div>
+                                    Subjects:
+                                </div>
+                                <input type='text' defaultValue={studentInfo["subjectsTutored"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "subjectsTutored": e.target.value } })}></input>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            }
+        
         </div>
+
     );
+
+    
 }
 
 
@@ -173,7 +270,7 @@ function StudentRow({ studentId }) {
             <td>{student.firstName} {student.lastName}</td>
             <td>{student.age}</td>
             <td>{student.grade}</td>
-            <td>{[...student.mathSubjects, ...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects].join(", ") || "N/A"}</td>
+            <td>{[...student.mathSubjects || "", ...student.scienceSubjects || "", ...student.englishSubjects || "", ...student.socialStudiesSubjects || "", ...student.miscSubjects || ""]}</td>
         </tr>
     );
 }
