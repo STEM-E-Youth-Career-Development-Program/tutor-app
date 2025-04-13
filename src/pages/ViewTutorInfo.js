@@ -2,6 +2,14 @@ import "./ViewTutorInfo.css";
 import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutorsSlice";
 import { useGetStudentByIdQuery } from "../state/studentsSlice";
 import { useParams } from "react-router-dom"
+import { React, useEffect, useCallback, useState } from 'react'
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { Link } from "react-router-dom"
+
+import { firebaseApp } from "../firebaseApp";
+import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
 
 import Availability from "../components/Availability/Availability";
 import Status from "../components/Status.js";
@@ -32,12 +40,12 @@ function LeftStats({ tutor, tutorId }) {
             <b>Grade Level: </b> {tutor.grade}
             <br></br>
             <br></br>
-            <b>Math Subjects: </b> {tutor.mathSubjects.join(", ") || "N/A"}<br />
-            <b>Science Subjects: </b> {tutor.scienceSubjects.join(", ") || "N/A"}<br />
-            <b>English Subjects: </b> {tutor.englishSubjects.join(", ") || "N/A"}<br />
-            <b>Social Studies Subjects: </b> {tutor.socialStudiesSubjects.join(", ") || "N/A"}<br />
-            <b>Miscellaneous Subjects: </b> {tutor.miscSubjects.join(", ") || "N/A"}<br />
-            <b>Other (unlisted) Subjects: </b> {tutor.otherSubjects || "N/A"}
+            <b>Math Subjects: </b> {tutor.mathSubjects?.join(", ") ?? "N/A"}<br />
+            <b>Science Subjects: </b> {tutor.scienceSubjects?.join(", ") ?? "N/A"}<br />
+            <b>English Subjects: </b> {tutor.englishSubjects?.join(", ") ?? "N/A"}<br />
+            <b>Social Studies Subjects: </b> {tutor.socialStudiesSubjects?.join(", ") ?? "N/A"}<br />
+            <b>Miscellaneous Subjects: </b> {tutor.miscSubjects?.join(", ") ?? "N/A"}<br />
+            <b>Other (unlisted) Subjects: </b> {tutor.otherSubjects ?? "N/A"}
             <br></br>
             <br></br>
             <b>Virtual or In-Person: </b> {tutor.inPerson && tutor.virtual ? "Both" : tutor.inPerson ? "In-Person" : "Virtual"}
@@ -48,7 +56,7 @@ function LeftStats({ tutor, tutorId }) {
             <a href={"mailto:" + tutor.email}><span className="email-small-text">SEND AN EMAIL</span></a>
             <br></br>
             <br></br>
-            <b>Number of Students: </b> {tutor.students.length}
+            <b>Number of Students: </b> {Object.keys(tutor.students ?? {}).length}
             <br></br>
             <br></br>
             <b>Availibility:</b>
@@ -235,7 +243,7 @@ function StudentsSlider({ studentIds }) {
                 <>
                     <div style={{ "display": "flex", "flex-direction": "column" }}>
                         <div>
-                            <button title="currently inactive" /*onClick = {() => uploadEdits()}*/ style={{ "fontSize": "1.25rem", "color": "gray" }}>&#9888; Upload edits</button>
+                            <button title="currently inactive" /*onClick = {() => uploadEdits()}*/ style={{ "fontSize": "1.25rem", "color": "gray", "backgroundColor": "lightblue" }}>&#9888; Upload edits</button>
                         </div>
                         <br></br>
                         <div class="add-student">
@@ -245,7 +253,7 @@ function StudentsSlider({ studentIds }) {
                         <br></br>
                         {Object.entries(studentData).map(([studentId, studentInfo]) => (
                             <div key={`se${studentId}`} className="student-editor">
-                                <button onClick={() => { setStudentData(Object.fromEntries(Object.entries(studentData).filter(([k, v]) => k !== studentId))) }}
+                                <button onClick={() => { setStudentData(Object.fromEntries(Object.entries(studentData).filter(([k, v]) => k !== String(studentId)))); console.log(studentData) }}
                                     style={{ "alignSelf": "end", "backgroundColor": "#FF5050", "fontSize": "0.9rem" }} >
                                     &#9587; Delete
                                 </button>
