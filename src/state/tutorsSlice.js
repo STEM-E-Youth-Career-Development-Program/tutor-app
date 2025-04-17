@@ -35,14 +35,13 @@ import {
  * @property {boolean} inPerson Whether the tutor is available in person; if virtual is also true, no preference was specified
  * @property {boolean} virtual Whether the tutor is available virtually; if inPerson is also true, no preference was specified
  * @property {string} city
- *
  * @property {string[]} mathSubjects
  * @property {string[]} scienceSubjects
  * @property {string[]} englishSubjects
  * @property {string[]} socialStudiesSubjects
  * @property {string[]} miscSubjects
  * @property {string} otherSubjects
- *
+ * @property {string[]} students 
  * @property {string} numStudentsRange
  * @property {string} numHoursRange
  *
