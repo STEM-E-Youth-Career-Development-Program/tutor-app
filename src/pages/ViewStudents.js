@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import "./View.css";
 import { useId } from 'react';
 import { useGetAvailableStudentsQuery } from "../state/studentsSlice";
+import { useGetAvailableTutorsQuery } from '../state/tutorsSlice';
+
 const labels = {
     "matched": "Matched with Tutor",
     "matchingInProgress": "Matching In Progress",
@@ -87,13 +89,13 @@ function SortOptions({ filters, setFilters }) {
     );
 }
 
-function StudentRow({ name, status, tutor, subjects, grade, timezone, id }) {
+function StudentRow({ name, status, tutors, subjects, grade, timezone, id }) {
     var link = `/view-student-info/${id}`;
     return (
         <tr>
             <td><a href={link}>{name}</a></td>
             <td>{status}</td>
-            <td>{tutor}</td>
+            <td>{tutors}</td>
             <td>{subjects}</td>
             <td>{grade}</td>
             <td>{timezone}</td>
@@ -109,34 +111,55 @@ function ViewStudents() {
         timezones: {}
     });
 
-    const students = [];
-    const { data: student, isLoading, isError } = useGetAvailableStudentsQuery();
+    const [students, setStudents] = useState([]);
+    const [tutorNames, setTutorNames] = useState({});
     const topics = ["mathSubjects", "scienceSubjects", "englishSubjects", "socialStudiesSubjects", "miscSubjects", "otherSubjects"];
-    if (!isLoading && !isError) {
-        student.forEach((doc) => {
-            let subjects = [];
-            let subjectTopics = [];
-            topics.forEach((topic) => {
-                if (doc[topic]) {
-                    if (doc[topic].length >= 1) {
+
+    const { data: studentQuery, isLoading, studentLoading, error: studentError } = useGetAvailableStudentsQuery();
+    const { data: tutorQuery, isLoading: tutorLoading, error: tutorError } = useGetAvailableTutorsQuery();
+
+    useEffect(() => {
+        if (tutorQuery && tutorQuery.length > 0) {
+            const newTutorNames = {};
+            tutorQuery.forEach((t) => {
+                if (t.firstName && t.lastName) {
+                    newTutorNames[t.id] = `${t.firstName} ${t.lastName}`;
+                }
+            });
+            setTutorNames(newTutorNames); 
+        }
+    }, [tutorQuery]); 
+
+    useEffect(() => {
+        // load students only when tutorNames is set
+        if (tutorNames && studentQuery) {
+            const newStudents = studentQuery.map((doc) => {
+                let subjects = [];
+                let subjectTopics = [];
+                topics.forEach((topic) => {
+                    if (doc[topic] && doc[topic].length >= 1) {
                         subjects.push(...doc[topic]);
                         subjectTopics.push(topic.slice(0, -8));
                     }
-                }
-            });
-            if (doc["availability"]) {
-                var count = 0;
-                doc["availability"].forEach((val) => {
-                    if (!val) {
-                        count++;
-                    }
                 });
-                students.push({ "name": doc["firstName"] + doc["lastName"], "status": doc["status"], "numStudents": count, "maxStudents": doc["availability"].length, "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"], "id": doc["id"] });
-            } else {
-                students.push({ "name": doc["firstName"] + doc["lastName"], "status": doc["status"], "numStudents": "N/A", "maxStudents": "N/A", "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"], "id": doc["id"] });
-            }
-        });
-    }
+
+                let names = doc["tutors"].map((tutorId) => tutorNames[tutorId] || "[N/A]"); //tutor does not exist
+
+                return {
+                    name: doc["firstName"] + " " + doc["lastName"],
+                    status: doc["status"],
+                    tutors: names.join(", "),
+                    subjects: subjects.join(", "),
+                    subjectTopics: subjectTopics,
+                    grade: doc["grade"],
+                    timezone: doc["timezone"],
+                    id: doc["id"]
+                };
+            });
+            setStudents(newStudents); 
+        }
+    }, [tutorNames, studentQuery]);
+
 
     const filteredStudents = students.filter(student => {
         const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key);
