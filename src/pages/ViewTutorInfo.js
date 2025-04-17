@@ -13,7 +13,6 @@ import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
 
 import Availability from "../components/Availability/Availability";
 import Status from "../components/Status.js";
-import { firebaseApp } from "../firebaseApp";
 
 
 
@@ -26,6 +25,22 @@ import { firebaseApp } from "../firebaseApp";
  * @param {TutorData} params.tutor 
  * @returns {React.JSX.Element}
  */
+
+export default function ViewTutorInfo() {
+    const { id } = useParams();
+    const { data: tutor, isLoading, isError } = useGetTutorByIdQuery(id);
+
+    return isError ? `Failed to find tutor with id ${id}` : isLoading ? "Loading..." : <>
+        <h1 className="view-tutor-info-h2">{tutor.firstName} {tutor.lastName}</h1>
+        <div className="view-tutor-info-box">
+            <LeftStats tutor={tutor} tutorId={id} />
+            <RightStats tutor={tutor} />
+
+        </div>
+    </>
+
+}
+
 function LeftStats({ tutor, tutorId }) {
 
     const [updateTutor] = useUpdateTutorByIdMutation();
@@ -35,7 +50,7 @@ function LeftStats({ tutor, tutorId }) {
     // function countTutees(tutorId) {
     //     return tutees.filter(student => student.tutorId === tutorId).length;
     // }
-    
+
     const numStudents = Object.keys(tutor.students).length
 
     return <>
@@ -71,61 +86,9 @@ function LeftStats({ tutor, tutorId }) {
             <br />
 
             <Availability person={tutor} />
-
-    const getClassName = (day, time) => {
-        return isAvailable(day, time) ? "available" : "unavailable";
-    }
-
-    return <> 
-        <div className="availability-table">
-            <table>
-                <tbody>
-                    <tr className="day-headings">
-                        <th scope="col"></th>
-                        <th scope="col">Mon</th>
-                        <th scope="col">Tue</th>
-                        <th scope="col">Wed</th>
-                        <th scope="col">Thu</th>
-                        <th scope="col">Fri</th>
-                        <th scope="col">Sat</th>
-                        <th scope="col">Sun</th>
-                    </tr>
-                    <tr>
-                        <th scope="row">Morning</th>
-                        <td className={getClassName(1,0)}></td>
-                        <td className={getClassName(2,0)}></td>
-                        <td className={getClassName(3,0)}></td>
-                        <td className={getClassName(4,0)}></td>
-                        <td className={getClassName(5,0)}></td>
-                        <td className={getClassName(6,0)}></td>
-                        <td className={getClassName(0,0)}></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Afternoon</th>
-                        <td className={getClassName(1,1)}></td>
-                        <td className={getClassName(2,1)}></td>
-                        <td className={getClassName(3,1)}></td>
-                        <td className={getClassName(4,1)}></td>
-                        <td className={getClassName(5,1)}></td>
-                        <td className={getClassName(6,1)}></td>
-                        <td className={getClassName(0,1)}></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Evening</th>
-                        <td className={getClassName(1,2)}></td>
-                        <td className={getClassName(2,2)}></td>
-                        <td className={getClassName(3,2)}></td>
-                        <td className={getClassName(4,2)}></td>
-                        <td className={getClassName(5,2)}></td>
-                        <td className={getClassName(6,2)}></td>
-                        <td className={getClassName(0,2)}></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </>
 }
-
 function AvailabilityChart() {
     return (
         <div className="Headings">
@@ -269,25 +232,6 @@ function StudentRow({ studentId }) {
     );
 }
 
-function ViewTutorInfo() {;
-    const { id } = useParams();
-    const { data: tutor, isLoading, isError } = useGetTutorByIdQuery(id);
-   
-    
-
-
-    return isError ? `Failed to find tutor with id ${id}` : isLoading ? "Loading..." : <>
-        <h1 className="view-tutor-info-h2">{tutor.firstName} {tutor.lastName}</h1>
-        <div className="view-tutor-info-box">
-            <LeftStats tutor={tutor} tutorId={id}/>
-            <RightStats tutor={tutor}/>
-            
-        </div>
-    </>
-
-}
-
-
 function StudentsSlider({ studentIds }) {
     //integer for setting number of student cards available on web page for responsiveness to window size 
     const [nSlides, setNSlides] = useState(slideCount)
@@ -406,6 +350,18 @@ function StudentsSlider({ studentIds }) {
         );
     }
 
+    //converts camel case to initial case, for eg. "firstName" to "First Name"
+    function varNameToText(name) {
+        let res = name.charAt(0).toUpperCase()
+        for (let i = 1; i < name.length; i++) {
+            if (name.charAt(i) === name.charAt(i).toUpperCase()) {
+                res += " "
+            }
+            res += name.charAt(i)
+        }
+        return res
+    }
+
     function SliderPrevArrow(props) {
         const { className, style, onClick } = props;
         return (
@@ -475,18 +431,4 @@ function StudentsSlider({ studentIds }) {
             }
         </div>
     );
-}
-
-export default ViewTutorInfo;
-
-//converts camel case to initial case, for eg. "firstName" to "First Name"
-function varNameToText(name) {
-    let res = name.charAt(0).toUpperCase()
-    for (let i = 1; i < name.length; i++) {
-        if (name.charAt(i) === name.charAt(i).toUpperCase()) {
-            res += " "
-        }
-        res += name.charAt(i)
-    }
-    return res
 }
