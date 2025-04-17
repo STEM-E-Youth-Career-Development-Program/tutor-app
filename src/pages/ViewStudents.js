@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
-import "./ViewStudents.css";
+import React, { useState,useEffect } from 'react';
+import "./View.css";
 import { useId } from 'react';
+import { useGetAvailableStudentsQuery } from "../state/studentsSlice";
+import { useGetAvailableTutorsQuery } from '../state/tutorsSlice';
+
+const labels = {
+    "matched": "Matched with Tutor",
+    "matchingInProgress": "Matching In Progress",
+    "unmatched": "Not matched with Tutor",
+    "updateNeeded": "Update Needed"
+};
 
 function CheckboxElement({ label, onChange }) {
     const id = useId();
     return (
-        <>
-            <label htmlFor={id}>{label}</label>
+        <span>
             <input type="checkbox" id={id} onChange={onChange} />
-        </>
+            <label htmlFor={id}>{label}</label>
+        </span>
     );
 }
 
@@ -27,20 +36,16 @@ function SortOptions({ filters, setFilters }) {
         <div className="dropdown">
             <span className="drop">Sort Options</span>
             <div className="dropdown-content">
-                <div className="StatusSection">
+                <div className="Section">
                     Status
                     <br />
                     <div className="Dropdowndiv">
-                        <ul className="cols-2">
-                            {['currentlyTutoring', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
-                                <li key={status}>
-                                    <CheckboxElement label={status} onChange={() => handleCheckboxChange('status', status)} />
-                                </li>
+                            {['matched', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
+                                <CheckboxElement label={labels[status]} onChange={() => handleCheckboxChange('status', status)} />
                             ))}
-                        </ul>
                     </div>
                 </div>
-                <div className="SubjectsSection">
+                <div className="Section">
                     Subjects
                     <br />
                     <div className="Dropdowndiv">
@@ -53,7 +58,7 @@ function SortOptions({ filters, setFilters }) {
                         ))}
                     </div>
                 </div>
-                <div className="GradeSection">
+                <div className="Section">
                     Grade
                     <br />
                     <div className="Dropdowndiv">
@@ -66,7 +71,7 @@ function SortOptions({ filters, setFilters }) {
                         ))}
                     </div>
                 </div>
-                <div className="TimezoneSection">
+                <div className="Section">
                     Timezone
                     <br />
                     <div className="Dropdowndiv">
@@ -84,12 +89,13 @@ function SortOptions({ filters, setFilters }) {
     );
 }
 
-function StudentRow({ name, status, tutor, subjects, grade, timezone }) {
+function StudentRow({ name, status, tutors, subjects, grade, timezone, id }) {
+    var link = `/view-student-info/${id}`;
     return (
         <tr>
-            <td>{name}</td>
+            <td><a href={link}>{name}</a></td>
             <td>{status}</td>
-            <td>{tutor}</td>
+            <td>{tutors}</td>
             <td>{subjects}</td>
             <td>{grade}</td>
             <td>{timezone}</td>
@@ -105,10 +111,55 @@ function ViewStudents() {
         timezones: {}
     });
 
-    const students = [
-        { name: "John Doe", status: "matchingInProgress", tutor: "Mr. Smith", subjects: "Math", grade: "1", timezone: "EST" },
-        // Add more student objects here
-    ];
+    const [students, setStudents] = useState([]);
+    const [tutorNames, setTutorNames] = useState({});
+    const topics = ["mathSubjects", "scienceSubjects", "englishSubjects", "socialStudiesSubjects", "miscSubjects", "otherSubjects"];
+
+    const { data: studentQuery, isLoading, studentLoading, error: studentError } = useGetAvailableStudentsQuery();
+    const { data: tutorQuery, isLoading: tutorLoading, error: tutorError } = useGetAvailableTutorsQuery();
+
+    useEffect(() => {
+        if (tutorQuery && tutorQuery.length > 0) {
+            const newTutorNames = {};
+            tutorQuery.forEach((t) => {
+                if (t.firstName && t.lastName) {
+                    newTutorNames[t.id] = `${t.firstName} ${t.lastName}`;
+                }
+            });
+            setTutorNames(newTutorNames); 
+        }
+    }, [tutorQuery]); 
+
+    useEffect(() => {
+        // load students only when tutorNames is set
+        if (tutorNames && studentQuery) {
+            const newStudents = studentQuery.map((doc) => {
+                let subjects = [];
+                let subjectTopics = [];
+                topics.forEach((topic) => {
+                    if (doc[topic] && doc[topic].length >= 1) {
+                        subjects.push(...doc[topic]);
+                        subjectTopics.push(topic.slice(0, -8));
+                    }
+                });
+
+                let names = doc["tutors"].map((tutorId) => tutorNames[tutorId] || "[N/A]"); //tutor does not exist
+
+                return {
+                    name: doc["firstName"] + " " + doc["lastName"],
+                    status: doc["status"],
+                    tutors: names.join(", "),
+                    subjects: subjects.join(", "),
+                    subjectTopics: subjectTopics,
+                    grade: doc["grade"],
+                    timezone: doc["timezone"],
+                    id: doc["id"]
+                };
+            });
+            setStudents(newStudents); 
+        }
+    }, [tutorNames, studentQuery]);
+
 
     const filteredStudents = students.filter(student => {
         const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key);

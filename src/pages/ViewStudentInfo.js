@@ -2,53 +2,39 @@ import React, { useState } from "react";
 import "./ViewStudentInfo.css";
 import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
 import { useParams } from "react-router-dom"
+import Availability from "../components/Availability/Availability";
+import Status from "../components/Status.js";
 
-function LeftStats() {
+import AvailabilityTable from "../components/AvailabilityTable";
+
+function LeftStats({ student, studentId }) {
+    const [updateStudent] = useUpdateStudentByIdMutation();
+    const updateStudentStatus = (event) => {
+        updateStudent({ ...student, id: studentId, status: event.target.value })
+    }
+    let subjects = [...student.mathSubjects];
+    subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, ...student.otherSubjects);
+
+    //Age, parent email, nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
     return (
         <div className="student-stats-parent">
-            <p><b>Status: Here</b></p>
-            <div className="dropdown">
-                <span className="dropdownbutton"><a href="">Change Status</a></span>
-                <div className="dropdown-content">
-                    <div className="StatusSection">
-                        <br />
-                        <div className="Dropdowndiv">
-                            <label htmlFor="First">Newly Signed Up</label>
-                            <input type="button" name="First" value="Newly" /><br />
-                            <label htmlFor="Second">Update Needed</label>
-                            <input type="button" name="Second" value="Update" /><br />
-                            <label htmlFor="Third">Unmatched Student</label>
-                            <input type="button" name="Third" value="Unmatched" /><br />
-                            <label htmlFor="Fourth">Currently being Tutoring</label>
-                            <input type="button" name="Fourth" value="Currently" /><br />
-                            <label htmlFor="Fifth">Matching In Progress</label>
-                            <input type="button" name="Fifth" value="Matching" /><br />
-                            <label htmlFor="Sixth">No Longer a Student</label>
-                            <input type="button" name="Sixth" value="Gone" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p><b>Status: </b>
+            <Status person={student} onChange={updateStudentStatus} options={["Matched", "Matching in Progress", "Unmatched Student", "Update Needed"]}></Status>
+            </p>
+            <b>Grade: </b> {student.grade}
             <br />
-            <b>Age: 17</b>
+            <b>Subjects: </b> {subjects.join(", ")}
             <br />
-            <b>Grade: 12th</b>
+            <b>Virtual or In-Person: </b> {student.inPerson && student.virtual ? "No preference" : student.inPerson ? "In-Person" : "Virtual"}
             <br />
-            <b>Subjects: Science, Math</b>
+            <b>Contact Information: </b> {student.email}
             <br />
-            <b>Virtual or In-Person: Virtual</b>
+            <a href={"mailto:" + student.email}>Send an Email</a>
+
             <br />
-            <b>Contact Information: asdfasdfasdf@gmail.com</b>
             <br />
-            <a href="mailto:info@steme.org">Send an Email</a>
-            <br />
-            <b>Parent Email: asdfasdfasdf@gmail.com</b>
-            <br />
-            <a href="mailto:info@steme.org">Send an Email</a>
-            <br />
-            <b>Emergency Contact: jlkasjdfkljad@gmail.com</b>
-            <br />
-            <a href="mailto:info@steme.org">Send an Email</a>
+            <Availability person={student} />
+
         </div>
     );
 }
@@ -68,31 +54,7 @@ function RightStats({ student, studentId }) {
 
 
     return (
-        <div className="student-stats-parent">
-            <table>
-                <thead>
-                    <tr className="day-headings">
-                        <th scope="col">Mon</th>
-                        <th scope="col">Tues</th>
-                        <th scope="col">Wed</th>
-                        <th scope="col">Thurs</th>
-                        <th scope="col">Fri</th>
-                        <th scope="col">Sat</th>
-                        <th scope="col">Sun</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">Morning</th>
-                        <td>...</td>
-                        <td>...</td>
-                        <td>...</td>
-                        <td>...</td>
-                        <td>...</td>
-                        <td>...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div className="availability-section">
             <p>Notes:</p>
             <div className="notesbox">
                 <textarea value={notes} onChange={handleInputChange} placeholder="Enter notes here..." />
@@ -114,10 +76,9 @@ function ViewStudentInfo() {
 
     return student === undefined ? "Loading" : (
         <>
-            <h1 className="view-student-info-h1">Student Name</h1>
-            <p className="view-student-info-h2">Tutored by Assigned Tutor Name</p>
+            <h1 className="view-tutor-info-h2">{student.firstName} {student.lastName}</h1>
             <div className="view-students-info-box">
-                <LeftStats />
+                <LeftStats student={student} studentId={id} />
                 <RightStats student={student} studentId={id} />
             </div>
         </>

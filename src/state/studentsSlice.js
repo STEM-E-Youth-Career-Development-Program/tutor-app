@@ -1,6 +1,6 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { firebaseApp } from "../firebaseApp";
-import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+import { getFirestore, getDoc, setDoc, doc, collection, getDocs } from "firebase/firestore";
 
 // TODO: Caching
 
@@ -26,33 +26,33 @@ import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
  * @property {string} legalGuardianHomeAddress
  * @property {string} legalGuardianPhoneNumber
  * @property {string} legalGuardianPhoneType
- * 
+ *
  * @property {string} emergencyContactFullName
  * @property {string} emergencyContactPhoneNumber
  * @property {string} emergencyContactRelationship relationship to student
- * 
+ *
  * @property {string[]} mathSubjects
  * @property {string[]} scienceSubjects
  * @property {string[]} englishSubjects
  * @property {string[]} socialStudiesSubjects
  * @property {string[]} miscSubjects
  * @property {string} otherSubjects
- * 
+ *
  * @property {boolean} permitsMultipleTutors
- * 
- * @property {boolean} prefersHomeworkHelp Whether the tutor prefers to provide occasional homework help; 
+ *
+ * @property {boolean} prefersHomeworkHelp Whether the tutor prefers to provide occasional homework help;
  *  if both this and prefersSubjectHelp are false, no preference was specified
  * @property {boolean} prefersSubjectHelp Whether the tutor prefers to provide subject help;
  *  if both this and prefersHomeworkHelp are false, no preference was specified
- * 
+ *
  * @property {string} primaryLanguage
  * @property {string} schoolName
  * @property {string} schoolDistrictName
- * 
+ *
  * @property {string} sourceOfStudent How did you hear about this program?
- * 
+ *
  * @property {string} ethnicityAndNationality
- * 
+ *
  * @property {string} foodAllergies
  * @property {string} otherHealthConcerns
  * @property {boolean} hasEpipen
@@ -68,36 +68,56 @@ const studentsSlice = createApi({
          */
         getStudentById: builder.query({
             async queryFn(id) {
-                const db = getFirestore(firebaseApp)
-                const docRef = doc(db, "students", id)
-                const docSnap = await getDoc(docRef)
+                const db = getFirestore(firebaseApp);
+                const docRef = doc(db, "students", id);
+                const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    return { data: docSnap.data() }
+                    return { data: docSnap.data() };
                 } else {
-                    throw new Error("Document does not exist")
+                    throw new Error("Document does not exist");
                 }
             },
-            providesTags: ["Tutors"]
+            providesTags: ["Tutors"],
         }),
 
         updateStudentById: builder.mutation({
             /**
-             * @param {string} id 
-             * @param {StudentData} studentData 
+             * @param {string} id
+             * @param {StudentData} studentData
              */
             async queryFn({ id, ...studentData }) {
-                const db = getFirestore(firebaseApp)
-                const docRef = doc(db, "students", id)
-                await setDoc(docRef, studentData)
-                return {}
+                const db = getFirestore(firebaseApp);
+                const docRef = doc(db, "students", id);
+                await setDoc(docRef, studentData);
+                return {};
             },
-            invalidatesTags: ["Tutors"]
+            invalidatesTags: ["Tutors"],
+        }),
+        getAvailableStudents: builder.query({
+            async queryFn() {
+                const db = getFirestore(firebaseApp);
+                const studentsCollection = collection(db, "students");
+
+                try {
+                    const snapshot = await getDocs(studentsCollection);
+                    const students = snapshot.docs.map((doc) => ({
+                        id: doc.id, // Include the document ID
+                        ...doc.data(), // Spread the document data
+                    }));
+                    return { data: students };
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+            providesTags: ["Students"],
         }),
     })
 })
 
-export const { 
+export const {
     useGetStudentByIdQuery,
     useUpdateStudentByIdMutation,
+    useGetAvailableStudentsQuery,
 } = studentsSlice
+
 export default studentsSlice;

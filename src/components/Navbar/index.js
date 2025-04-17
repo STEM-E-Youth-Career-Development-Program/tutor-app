@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "react-router-dom"
-import "./index.css"
+import { Link, useNavigate } from "react-router-dom";
+import "./index.css";
 
-export default function NavBar({user, setUser}) {
-    const navigate = useNavigate()
+export default function NavBar({ user, setUser }) {
+    const navigate = useNavigate();
+    const exampleStudentId = "leFaNrKmmcXWjr6RvIPb";
 
     return <>
         <nav className="navbar">
@@ -15,9 +16,11 @@ export default function NavBar({user, setUser}) {
                     <li className="float-right" onClick={() => {
                         setUser(undefined)
                         navigate("/")
-                    }}><a>Logout</a></li>
+                        // eslint-disable-next-line jsx-a11y/anchor-is-valid,no-script-url
+                    }}><a href="javascript:void(0)">Logout</a></li>
                 }
             </ul>
         </nav>
     </>
 }
+
