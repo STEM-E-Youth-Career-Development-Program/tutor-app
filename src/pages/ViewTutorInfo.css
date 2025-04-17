@@ -1,4 +1,4 @@
-.tutor-stats-parent,.availability-section{
+.tutor-stats-parent,.availability-section,.tutor-right-stats{
     background-color: lightgray;
     border-radius: 25px;
     padding: 1rem;
@@ -44,7 +44,103 @@ p4 {
 p5 {
     font-weight: normal;
 }
+.availability-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; 
+}
 
+.availability-table th,
+.availability-table td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+    width: calc(100% / 8); 
+    font-size: 10pt;
+}
+
+.day-headings th {
+    background-color: #f4f4f4;
+}
+
+.Headings {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.heading-item {
+    flex: 1;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 5px; 
+    margin: 0 5px; 
+    font-size: 12px; 
+    width: 50px;
+}
+
+.heading-item:first-child {
+    margin-left: 0; 
+}
+
+.heading-item:last-child {
+    margin-right: 0; 
+}
+
+.available {
+    background-color: green;
+}
+
+.unavailable {
+    background-color: #ccc;
+}
+.tutor-right-stats {
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.tutor-right-stats h3 {
+    margin-top: 0;
+    font-size: 1.25em;
+}
+
+.tutees-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tutees-table th {
+    background-color: #e0e0e0;
+    border-bottom: 2px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.tutees-table td {
+    border-bottom: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.tutees-table tbody tr:hover {
+    background-color: #f7f7f7;
+}
+
+.edit-tutees {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.edit-tutees a {
+    color: #007BFF;
+    text-decoration: underline;
+    font-size: 0.9em;
+}
 
 
 .student-slide-wrapper {
