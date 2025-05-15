@@ -47,11 +47,7 @@ function LeftStats({ tutor, tutorId }) {
     const updateTutorStatus = (event) => {
         updateTutor({ ...tutor, id: tutorId, status: event.target.value })
     }
-    // function countTutees(tutorId) {
-    //     return tutees.filter(student => student.tutorId === tutorId).length;
-    // }
 
-    const numStudents = Object.keys(tutor.students).length
 
     return <>
         <div className="tutor-stats-parent">
@@ -79,13 +75,13 @@ function LeftStats({ tutor, tutorId }) {
             <a href={"mailto:" + tutor.email}><span className="email-small-text">SEND AN EMAIL</span></a>
             <br></br>
             <br></br>
-            <b>Number of Students: </b> {Object.keys(tutor.students ?? {}).length}
+            <b>Number of Students: </b> {(tutor.students ? tutor.students : {}).length}
             <br></br>
             <br></br>
             <b>Availibility:</b>
             <br />
 
-            <Availability person={tutor} />
+            {/* <Availability person={tutor} />  */}
         </div>
     </>
 }
@@ -98,6 +94,7 @@ function AvailabilityChart() {
     );
 }
 function RightStats({ tutor }) {
+    
     const [showEditors, setShowEditors] = useState(false)
     // Temporarily add the specific student ID for testing purposes
     const [studentData, setStudentData] = useState({})
@@ -107,7 +104,7 @@ function RightStats({ tutor }) {
     const { data: student, isError, isLoading } = useGetStudentByIdQuery(newStudentId)
 
     useEffect(() => {
-        if(tutor.students.length !== 0) {
+        if(tutor.students) {
             tutor.students.map((studentId, index) => {
                 setNewStudentId(String(studentId))
             })
@@ -127,11 +124,8 @@ function RightStats({ tutor }) {
         const docRef = doc(db, "students", studentId)
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-            if (studentId in tutor.students && 'subjectsTutored' in tutor.students[studentId]) { //must retrieve subjectsTutored from studentIds since not included in student object 
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": tutor.students[studentId].subjectsTutored } })
-            }
-            else {
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade } })
+            if (tutor.students && studentId in tutor.students) {  
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": getAllSubjects(tutor.students[studentId]) } })
             }
         } else {
             alert(String(studentId) + " not found")
@@ -148,6 +142,22 @@ function RightStats({ tutor }) {
     //the input in the 'Add Student' text field in Edit Students
     const [addStudentInput, setAddStudentInput] = useState("")
 
+    function getAllSubjects(personData) {
+        if (!personData) {
+          return "";
+        }
+      
+        const allSubjects = [];
+        const subjectCategories = ["mathSubjects", "scienceSubjects", "englishSubjects", "socialStudiesSubjects", "miscSubjects", "otherSubjects"];
+      
+        for (const category of subjectCategories) {
+          if (Array.isArray(personData[category]) && personData[category].length > 0) {
+            allSubjects.push(...personData[category]);
+          }
+        }
+      
+        return allSubjects.join(", ");
+      }
 
     return (
         <div className="tutor-right-stats">
@@ -162,12 +172,12 @@ function RightStats({ tutor }) {
                     </tr>
                 </thead>
                 <tbody>
-                {Object.keys(studentData).map((name) => (
-                    <tr key={name}>
-                        <td>{name ? name : "N/A"}</td>
-                        <td>{studentData[name].age}</td>
-                        <td>{studentData[name].age}</td>
-                        <td>{studentData[name].age}</td>
+                {Object.keys(studentData).map((key) => (
+                    <tr key={key}>
+                        <td>{studentData[key].name ? studentData[key].name : "N/A"}</td>
+                        <td>{studentData[key].age}</td>
+                        <td>{studentData[key].grade}</td>
+                        <td>{studentData[key].subjectsTutored}</td>
                     </tr>
                 ))}
                 </tbody>
