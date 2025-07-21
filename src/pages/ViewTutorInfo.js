@@ -162,12 +162,12 @@ function RightStats({ tutor }) {
                     </tr>
                 </thead>
                 <tbody>
-                {Object.keys(studentData).map((name) => (
-                    <tr key={name}>
-                        <td>{name ? name : "N/A"}</td>
-                        <td>{studentData[name].age}</td>
-                        <td>{studentData[name].age}</td>
-                        <td>{studentData[name].age}</td>
+                {Object.keys(studentData).map((id) => (
+                    <tr key={id}>
+                        <td>{id ? <Link to={`/view-student-info/${id}`}> {studentData[id].name}</Link> : "N/A"}</td>
+                        <td>{studentData[id].age}</td>
+                        <td>{studentData[id].age}</td>
+                        <td>{studentData[id].age}</td>
                     </tr>
                 ))}
                 </tbody>
