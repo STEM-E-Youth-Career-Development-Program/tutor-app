@@ -2,8 +2,8 @@ import "./Availability.css";
 
 export default function Availability({ person }) {
     const isAvailable = (day, time) => {
-        if(person === null) {
-            return
+        if(person === null || person.availability === undefined) { // In case person or person.availability is undefined
+            return false;
         } 
         return person.availability[3 * day + time];
     }
