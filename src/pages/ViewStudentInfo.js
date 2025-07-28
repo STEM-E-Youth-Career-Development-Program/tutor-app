@@ -12,9 +12,15 @@ function LeftStats({ student, studentId }) {
     const updateStudentStatus = (event) => {
         updateStudent({ ...student, id: studentId, status: event.target.value })
     }
-    let subjects = [...student.mathSubjects];
-    subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, ...student.otherSubjects);
-
+    let subjects = [
+        ...(student.mathSubjects || []),
+        ...(student.languageSubjects || []),
+        ...(student.scienceSubjects || []),
+        ...(student.englishSubjects || []),
+        ...(student.socialStudiesSubjects || []),
+        ...(student.miscSubjects || []),
+        ...(student.otherSubjects || [])
+    ];
     //Age, parent email, nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
     return (
         <div className="student-stats-parent">
