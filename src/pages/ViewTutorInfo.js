@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom"
 
 import { firebaseApp } from "../firebaseApp";
-import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 
 import Availability from "../components/Availability/Availability";
 import Status from "../components/Status.js";
@@ -63,11 +63,11 @@ function LeftStats({ tutor, tutorId }) {
             <b>Grade Level: </b> {tutor.grade}
             <br></br>
             <br></br>
-            <b>Math Subjects: </b> {tutor.mathSubjects?.join(", ") ?? "N/A"}<br />
-            <b>Science Subjects: </b> {tutor.scienceSubjects?.join(", ") ?? "N/A"}<br />
-            <b>English Subjects: </b> {tutor.englishSubjects?.join(", ") ?? "N/A"}<br />
-            <b>Social Studies Subjects: </b> {tutor.socialStudiesSubjects?.join(", ") ?? "N/A"}<br />
-            <b>Miscellaneous Subjects: </b> {tutor.miscSubjects?.join(", ") ?? "N/A"}<br />
+            <b>Math Subjects: </b> {tutor.mathSubjects.length > 0 ? tutor.mathSubjects.join(", ") : "N/A"}<br />
+            <b>Science Subjects: </b> {tutor.scienceSubjects.length > 0 ? tutor.scienceSubjects.join(", ") : "N/A"}<br />
+            <b>English Subjects: </b> {tutor.englishSubjects.length > 0 ? tutor.englishSubjects.join(", ") : "N/A"}<br />
+            <b>Social Studies Subjects: </b> {tutor.socialStudiesSubjects.length > 0 ? tutor.socialStudiesSubjects.join(", ") : "N/A"}<br />
+            <b>Miscellaneous Subjects: </b> {tutor.miscSubjects.length > 0 ? tutor.miscSubjects.join(", ") : "N/A"}<br />
             <b>Other (unlisted) Subjects: </b> {tutor.otherSubjects ?? "N/A"}
             <br></br>
             <br></br>
@@ -112,11 +112,8 @@ function RightStats({ tutor }) {
                 setNewStudentId(String(studentId))
             })
         }
-        else {
-            setNewStudentId("leFaNrKmmcXWjr6RvIPb")
-        }
     }, [tutor.students])
-    
+
     const addToStudentData = useCallback((addition) => {
         setStudentData(prevList => ({ ...addition, ...prevList }))
         setAddStudentInput("")
@@ -127,11 +124,11 @@ function RightStats({ tutor }) {
         const docRef = doc(db, "students", studentId)
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-            if (studentId in tutor.students && 'subjectsTutored' in tutor.students[studentId]) { //must retrieve subjectsTutored from studentIds since not included in student object 
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": tutor.students[studentId].subjectsTutored } })
+            if (studentId in tutor.students) { //must retrieve subjectsTutored from studentIds since not included in student object 
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade, "subjects": [...student.mathSubjects, ...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, student.otherSubjects] } })
             }
             else {
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade } })
+                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade } })
             }
         } else {
             alert(String(studentId) + " not found")
@@ -156,7 +153,6 @@ function RightStats({ tutor }) {
                 <thead>
                     <tr>
                         <th>Student Name</th>
-                        <th>Student Age</th>
                         <th>Student Grade Level</th>
                         <th>Subjects Tutored</th>
                     </tr>
@@ -165,9 +161,8 @@ function RightStats({ tutor }) {
                 {Object.keys(studentData).map((id) => (
                     <tr key={id}>
                         <td>{id ? <Link to={`/view-student-info/${id}`}> {studentData[id].name}</Link> : "N/A"}</td>
-                        <td>{studentData[id].age}</td>
-                        <td>{studentData[id].age}</td>
-                        <td>{studentData[id].age}</td>
+                        <td>{studentData[id].grade}</td>
+                        <td>{studentData[id].subjects}</td>
                     </tr>
                 ))}
                 </tbody>
