@@ -1,158 +1,158 @@
 import React from "react";
 import "./Matching.css";
 import {
-    useGetTutorByIdQuery,
-    useUpdateTutorByIdMutation,
-} from "../state/tutorsSlice";
-import {
-    useGetAvailableStudentsQuery,
+    useGetStudentByIdQuery,
     useUpdateStudentByIdMutation,
 } from "../state/studentsSlice";
+import {
+    useGetAvailableTutorsQuery,
+    useUpdateTutorByIdMutation,
+} from "../state/tutorsSlice";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import Availability from "../components/Availability/Availability";
 
 function Matching() {
-    const { id: tutorId } = useParams();
+    const { id: studentId } = useParams();
     const {
-        data: tutor,
-        isLoading: tutorLoading,
-        error: tutorError,
-    } = useGetTutorByIdQuery(tutorId);
+        data: student,
+        isLoading: studentLoading,
+        error: studentError,
+    } = useGetStudentByIdQuery(studentId);
     const {
-        data: availableStudents,
-        isLoading: studentsLoading,
-        error: studentsError,
-    } = useGetAvailableStudentsQuery();
-    console.log(availableStudents);
-    const [updateTutor] = useUpdateTutorByIdMutation();
+        data: availableTutors,
+        isLoading: tutorsLoading,
+        error: tutorsError,
+    } = useGetAvailableTutorsQuery();
+    console.log(availableTutors);
     const [updateStudent] = useUpdateStudentByIdMutation();
+    const [updateTutor] = useUpdateTutorByIdMutation();
     const navigate = useNavigate();
 
-    if (tutorLoading || studentsLoading) {
+    if (studentLoading || tutorsLoading) {
         return <div>Loading...</div>;
     }
-    if (tutorError || studentsError) {
+    if (studentError || tutorsError) {
         return (
-            <div>Error: {tutorError?.message || studentsError?.message}</div>
+            <div>Error: {studentError?.message || tutorsError?.message}</div>
         );
     }
-    if (!tutor) {
-        return <div>Tutor not found.</div>;
+    if (!student) {
+        return <div>Student not found.</div>;
     }
 
     // Ranking algorithm calculates a match score for each student based on overlapping properties.
-    const rankedStudents = availableStudents
-        .map((student) => {
+    const rankedTutors = availableTutors
+        .map((tutor) => {
             let score = 0;
 
             // Subject matching awards 5 points per matching subject in key categories.
-            if (tutor.mathSubjects?.length && student.mathSubjects?.length) {
-                const mathMatches = tutor.mathSubjects.filter((subj) =>
-                    student.mathSubjects.includes(subj)
+            if (student.mathSubjects?.length && tutor.mathSubjects?.length) {
+                const mathMatches = student.mathSubjects.filter((subj) =>
+                    tutor.mathSubjects.includes(subj)
                 ).length;
                 score += mathMatches * 5;
             }
             if (
-                tutor.scienceSubjects?.length &&
-                student.scienceSubjects?.length
+                student.scienceSubjects?.length &&
+                tutor.scienceSubjects?.length
             ) {
-                const scienceMatches = tutor.scienceSubjects.filter((subj) =>
-                    student.scienceSubjects.includes(subj)
+                const scienceMatches = student.scienceSubjects.filter((subj) =>
+                    tutor.scienceSubjects.includes(subj)
                 ).length;
                 score += scienceMatches * 5;
             }
             if (
-                tutor.englishSubjects?.length &&
-                student.englishSubjects?.length
+                student.englishSubjects?.length &&
+                tutor.englishSubjects?.length
             ) {
-                const englishMatches = tutor.englishSubjects.filter((subj) =>
-                    student.englishSubjects.includes(subj)
+                const englishMatches = student.englishSubjects.filter((subj) =>
+                    tutor.englishSubjects.includes(subj)
                 ).length;
                 score += englishMatches * 5;
             }
             if (
-                tutor.socialStudiesSubjects?.length &&
-                student.socialStudiesSubjects?.length
+                student.socialStudiesSubjects?.length &&
+                tutor.socialStudiesSubjects?.length
             ) {
-                const socialMatches = tutor.socialStudiesSubjects.filter(
-                    (subj) => student.socialStudiesSubjects.includes(subj)
+                const socialMatches = student.socialStudiesSubjects.filter(
+                    (subj) => tutor.socialStudiesSubjects.includes(subj)
                 ).length;
                 score += socialMatches * 5;
             }
-            if (tutor.miscSubjects?.length && student.miscSubjects?.length) {
-                const miscMatches = tutor.miscSubjects.filter((subj) =>
-                    student.miscSubjects.includes(subj)
+            if (student.miscSubjects?.length && tutor.miscSubjects?.length) {
+                const miscMatches = student.miscSubjects.filter((subj) =>
+                    tutor.miscSubjects.includes(subj)
                 ).length;
                 score += miscMatches * 3;
             }
 
             // adds points if both tutor and student prefer in-person or virtual
-            if (tutor.inPerson && student.inPerson) score += 10;
-            if (tutor.virtual && student.virtual) score += 10;
+            if (student.inPerson && tutor.inPerson) score += 10;
+            if (student.virtual && tutor.virtual) score += 10;
 
             // add points if preferences for homework or subject help match.
             if (
-                tutor.prefersHomeworkHelp !== undefined &&
                 student.prefersHomeworkHelp !== undefined &&
-                tutor.prefersHomeworkHelp === student.prefersHomeworkHelp
+                tutor.prefersHomeworkHelp !== undefined &&
+                student.prefersHomeworkHelp === tutor.prefersHomeworkHelp
             ) {
                 score += 5;
             }
             if (
-                tutor.prefersSubjectHelp !== undefined &&
                 student.prefersSubjectHelp !== undefined &&
-                tutor.prefersSubjectHelp === student.prefersSubjectHelp
+                tutor.prefersSubjectHelp !== undefined &&
+                student.prefersSubjectHelp === tutor.prefersSubjectHelp
             ) {
                 score += 5;
             }
 
-            return { ...student, score };
+            return { ...tutor, score };
         })
         .sort((a, b) => b.score - a.score); // Highest match score first
 
     // Handle matching: updates both the student and tutor records.
-    const handleMatch = async (studentIdToMatch) => {
+    const handleMatch = async (tutorIdToMatch) => {
         try {
             // Finds the student to update from the available list.
-            const studentToUpdate = availableStudents.find(
-                (s) => s.id === studentIdToMatch
+            const tutorToUpdate = availableTutors.find(
+                (s) => s.id === tutorIdToMatch
             );
-            if (!studentToUpdate) {
-                alert("Student not found");
+            if (!tutorToUpdate) {
+                alert("Tutor not found");
                 return;
             }
 
             // Updates the student record: adds the tutor's id and sets status to "matched"
-            await updateStudent({
-                id: studentIdToMatch,
-                tutors: [...(studentToUpdate.tutors ?? []), tutorId],
+            await updateTutor({
+                id: tutorIdToMatch,
+                students: [...(tutorToUpdate.students ?? []), studentId],
                 status: "matched",
             });
 
             // Updates the tutor record: adds the student's id, updates the student count, and sets status to "matched"
-            await updateTutor({
-                id: tutorId,
-                students: [...(tutor.students ?? []), studentIdToMatch],
-                numStudents: (tutor.numStudents || 0) + 1,
+            await updateStudent({
+                id: studentId,
+                tutors: [...(student.tutors ?? []), tutorIdToMatch],
                 status: "matched",
             });
 
-            navigate(`/view-tutor-info/${tutorId}`);
+            navigate(`/view-student-info/${studentId}`);
         } catch (error) {
-            console.error("Error matching tutor to student:", error);
-            alert("Error matching tutor to student. Please try again.");
+            console.error("Error matching student to tutor:", error);
+            alert("Error matching student to tutor. Please try again.");
         }
     };
 
     return (
         <div className="matching-page">
             <h1>
-                Matching for Tutor: {tutor.firstName} {tutor.lastName}
+                Matching for Student: {student.firstName} {student.lastName}
             </h1>
             <div className="table-container">
-                <table className="students-table">
+                <table className="tutors-table">
                     <thead>
                         <tr>
-                            <th>Student Name</th>
+                            <th>Tutor Name</th>
                             <th>Grade</th>
                             <th>Subjects</th>
                             <th>Availability</th>
@@ -162,32 +162,32 @@ function Matching() {
                         </tr>
                     </thead>
                     <tbody>
-                        {rankedStudents.map((student) => (
-                            <tr key={student.id}>
+                        {rankedTutors.map((tutor) => (
+                            <tr key={tutor.id}>
                                 <td>
                                     <Link
-                                        to={`/view-student-info/${student.id}`}
+                                        to={`/view-tutor-info/${tutor.id}`}
                                     >
-                                        {student.firstName} {student.lastName}
+                                        {tutor.firstName} {tutor.lastName}
                                     </Link>
                                 </td>
-                                <td>{student.grade}</td>
+                                <td>{tutor.grade}</td>
                                 <td>
                                     {[
-                                        ...(student.mathSubjects || []),
-                                        ...(student.scienceSubjects || []),
-                                        ...(student.englishSubjects || []),
-                                        ...(student.socialStudiesSubjects ||
+                                        ...(tutor.mathSubjects || []),
+                                        ...(tutor.scienceSubjects || []),
+                                        ...(tutor.englishSubjects || []),
+                                        ...(tutor.socialStudiesSubjects ||
                                             []),
-                                        ...(student.miscSubjects || []),
+                                        ...(tutor.miscSubjects || []),
                                     ].join(", ")}
                                 </td>
-                                <td>{student.availability?.join(", ")}</td>
-                                <td>{student.status}</td>
-                                <td>{student.score}</td>
+                                <td><Availability person={tutor} /></td>
+                                <td>{tutor.status}</td>
+                                <td>{tutor.score}</td>
                                 <td>
                                     <button
-                                        onClick={() => handleMatch(student.id)}
+                                        onClick={() => handleMatch(tutor.id)}
                                     >
                                         Match
                                     </button>
