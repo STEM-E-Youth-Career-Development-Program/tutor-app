@@ -5,10 +5,10 @@ import { useGetAvailableStudentsQuery } from "../state/studentsSlice";
 import { useGetAvailableTutorsQuery } from '../state/tutorsSlice';
 
 const labels = {
-    "matched": "Matched with Tutor",
-    "matchingInProgress": "Matching In Progress",
-    "unmatched": "Not matched with Tutor",
-    "updateNeeded": "Update Needed"
+    "Matched": "Matched with Tutor",
+    "MatchingInProgress": "Matching In Progress",
+    "Unmatched": "Not matched with Tutor",
+    "UpdateNeeded": "Update Needed"
 };
 
 function CheckboxElement({ label, onChange }) {
@@ -40,7 +40,7 @@ function SortOptions({ filters, setFilters }) {
                     Status
                     <br />
                     <div className="Dropdowndiv">
-                            {['matched', 'matchingInProgress', 'unmatched', 'updateNeeded'].map((status) => (
+                            {['Matched', 'MatchingInProgress', 'Unmatched', 'UpdateNeeded'].map((status) => (
                                 <CheckboxElement label={labels[status]} onChange={() => handleCheckboxChange('status', status)} />
                             ))}
                     </div>
