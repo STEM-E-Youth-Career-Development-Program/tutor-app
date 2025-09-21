@@ -129,13 +129,13 @@ function ViewTutors() {
             if (doc["availability"]) {
                 var count = 0;
                 doc["availability"].forEach((val) => {
-                    if (!val) {
+                    if (val) {
                         count++;
                     }
                 });
-                tutors.push({ "name": doc["firstName"] + doc["lastName"], "status": doc["status"], "numStudents": count, "maxStudents": doc["availability"].length, "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"],  "id": doc["id"] });
+                tutors.push({ "name": doc["firstName"] + " " + doc["lastName"], "status": doc["status"], "numStudents": doc["students"].length, "maxStudents": count, "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"],  "id": doc["id"] });
             } else {
-                tutors.push({ "name": doc["firstName"] + doc["lastName"], "status": doc["status"], "numStudents": "N/A", "maxStudents": "N/A", "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"], "id": doc["id"] });
+                tutors.push({ "name": doc["firstName"] + " " + doc["lastName"], "status": doc["status"], "numStudents": "N/A", "maxStudents": 0, "subjects": subjects.join(", "), "subjectTopics": subjectTopics, "grade": doc["grade"], "timezone": doc["timezone"], "id": doc["id"] });
             }
             
             
@@ -174,3 +174,4 @@ function ViewTutors() {
 }
 
 export default ViewTutors;
+//name, status, numStudents, maxStudents, subjects, id
