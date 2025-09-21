@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "./ViewStudentInfo.css";
 import { useGetStudentByIdQuery, useUpdateStudentByIdMutation } from "../state/studentsSlice";
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import Availability from "../components/Availability/Availability";
 import Status from "../components/Status.js";
 
-import AvailabilityTable from "../components/AvailabilityTable";
 
 function LeftStats({ student, studentId }) {
     const [updateStudent] = useUpdateStudentByIdMutation();
@@ -13,13 +12,13 @@ function LeftStats({ student, studentId }) {
         updateStudent({ ...student, id: studentId, status: event.target.value })
     }
     let subjects = [...student.mathSubjects];
-    subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, ...student.otherSubjects);
+    subjects.push(...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, student.otherSubjects);
 
     //Age, parent email, nor emergency contact email doesn't seem to be part of the database according to studentsSlice notes
     return (
         <div className="student-stats-parent">
             <p><b>Status: </b>
-            <Status person={student} onChange={updateStudentStatus} options={["Matched", "Matching in Progress", "Unmatched Student", "Update Needed"]}></Status>
+                <Status person={student} onChange={updateStudentStatus} options={["Matched", "MatchingInProgress", "Unmatched", "UpdateNeeded"]}></Status>
             </p>
             <b>Grade: </b> {student.grade}
             <br />
@@ -52,9 +51,14 @@ function RightStats({ student, studentId }) {
         updateStudent({ ...student, id: studentId, notes: notes })
     }
 
+    const navigate = useNavigate();
+    const redirectToMatching = () => {
+        navigate(`/matching/${studentId}`);
+    };
 
     return (
         <div className="availability-section">
+            <button onClick={redirectToMatching}>Match</button>
             <p>Notes:</p>
             <div className="notesbox">
                 <textarea value={notes} onChange={handleInputChange} placeholder="Enter notes here..." />
