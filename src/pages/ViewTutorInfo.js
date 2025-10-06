@@ -84,7 +84,7 @@ function LeftStats({ tutor, tutorId }) {
 
 function RightStats({ tutor, tutorId }) {
     const [showEditors, setShowEditors] = useState(false)
-    // Temporarily add the specific student ID for testing purposes
+    
     const [studentData, setStudentData] = useState({})
 
     const [newStudentId, setNewStudentId] = useState("")
@@ -138,7 +138,7 @@ function RightStats({ tutor, tutorId }) {
     const [addStudentInput, setAddStudentInput] = useState("")
 
     // called on clicking Upload Edits button
-    // updates tutor.students to the student Ids and subjectsTutored visible in studentData
+    // tutorsSlice may need a new property tutorData for storing both student IDs and subjects tutored
     function UploadEdits() {
         if(tutorId !== undefined){
             updateTutor({
@@ -229,25 +229,8 @@ function RightStats({ tutor, tutorId }) {
                                 <div>
                                     Key: {studentId}
                                 </div>
-                                <div>
-                                    Math Subjects:
-                                </div>
-                                <input type='text' defaultValue={studentInfo["mathSubjects"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "mathSubjects": e.target.value.split(",").map(s => s.trim()).filter(Boolean) } })}></input>
-                                <div>
-                                    English Subjects:
-                                </div>
-                                <input type='text' defaultValue={studentInfo["englishSubjects"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "englishSubjects": e.target.value.split(",").map(s => s.trim()).filter(Boolean) } })}></input>
-                                <div>Science Subjects (comma-separated):</div>
-                                <input
-                                    type="text"
-                                    value={(studentInfo.scienceSubjects || []).join(", ")}
-                                    onChange={(e) => {
-                                        const arr = e.target.value.split(",").map(s => s.trim()).filter(Boolean)
-                                        setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], scienceSubjects: arr } }))
-                                    }}
-                                />
 
-                                <div>English Subjects (comma-separated):</div>
+                                <div>Math Subjects:</div>
                                 <input
                                     type="text"
                                     value={(studentInfo.englishSubjects || []).join(", ")}
@@ -257,7 +240,17 @@ function RightStats({ tutor, tutorId }) {
                                     }}
                                 />
 
-                                <div>Social Studies Subjects (comma-separated):</div>
+                                <div>English Subjects:</div>
+                                <input
+                                    type="text"
+                                    value={(studentInfo.englishSubjects || []).join(", ")}
+                                    onChange={(e) => {
+                                        const arr = e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                                        setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], englishSubjects: arr } }))
+                                    }}
+                                />
+
+                                <div>Social Studies Subjects:</div>
                                 <input
                                     type="text"
                                     value={(studentInfo.socialStudiesSubjects || []).join(", ")}
@@ -267,7 +260,7 @@ function RightStats({ tutor, tutorId }) {
                                     }}
                                 />
 
-                                <div>Misc Subjects (comma-separated):</div>
+                                <div>Misc Subjects:</div>
                                 <input
                                     type="text"
                                     value={(studentInfo.miscSubjects || []).join(", ")}
