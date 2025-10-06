@@ -3,9 +3,6 @@ import { useGetTutorByIdQuery, useUpdateTutorByIdMutation } from "../state/tutor
 import { useGetStudentByIdQuery } from "../state/studentsSlice";
 import { useParams } from "react-router-dom"
 import { React, useEffect, useCallback, useState } from 'react'
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom"
 
 import { firebaseApp } from "../firebaseApp";
@@ -34,7 +31,7 @@ export default function ViewTutorInfo() {
         <h1 className="view-tutor-info-h2">{tutor.firstName} {tutor.lastName}</h1>
         <div className="view-tutor-info-box">
             <LeftStats tutor={tutor} tutorId={id} />
-            <RightStats tutor={tutor} />
+            <RightStats tutor={tutor} tutorId={id} />
 
         </div>
     </>
@@ -47,17 +44,12 @@ function LeftStats({ tutor, tutorId }) {
     const updateTutorStatus = (event) => {
         updateTutor({ ...tutor, id: tutorId, status: event.target.value })
     }
-    // function countTutees(tutorId) {
-    //     return tutees.filter(student => student.tutorId === tutorId).length;
-    // }
-
-    const numStudents = Object.keys(tutor.students).length
 
     return <>
         <div className="tutor-stats-parent">
             <b>Status: </b>
             {/* Update a tutor's status here */}
-            <Status person={tutor} onChange={updateTutor} options={["Currently Tutoring", "Matching in Progress", "Unmatched Tutor", "Update Needed"]} />
+            <Status person={tutor} onChange={updateTutorStatus} options={["Currently Tutoring", "Matching in Progress", "Unmatched Tutor", "Update Needed"]} />
             <br></br>
             <br></br>
             <b>Grade Level: </b> {tutor.grade}
@@ -89,15 +81,8 @@ function LeftStats({ tutor, tutorId }) {
         </div>
     </>
 }
-function AvailabilityChart() {
-    return (
-        <div className="Headings">
-            <div className="heading-item available">Available</div>
-            <div className="heading-item unavailable">Unavailable</div>
-        </div>
-    );
-}
-function RightStats({ tutor }) {
+
+function RightStats({ tutor, tutorId }) {
     const [showEditors, setShowEditors] = useState(false)
     // Temporarily add the specific student ID for testing purposes
     const [studentData, setStudentData] = useState({})
@@ -119,17 +104,24 @@ function RightStats({ tutor }) {
         setAddStudentInput("")
     }, [])
 
+    const [updateTutor] = useUpdateTutorByIdMutation();
+
     const checkStudentExists = useCallback(async (studentId) => {
         const db = getFirestore(firebaseApp)
         const docRef = doc(db, "students", studentId)
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-            if (studentId in tutor.students) { //must retrieve subjectsTutored from studentIds since not included in student object 
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade, "subjects": [...student.mathSubjects, ...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, student.otherSubjects] } })
+            const s = docSnap.data()
+            const subjects = {
+                mathSubjects: Array.isArray(s.mathSubjects) ? s.mathSubjects.slice() : (s.mathSubjects ? [s.mathSubjects] : []),
+                scienceSubjects: Array.isArray(s.scienceSubjects) ? s.scienceSubjects.slice() : (s.scienceSubjects ? [s.scienceSubjects] : []),
+                englishSubjects: Array.isArray(s.englishSubjects) ? s.englishSubjects.slice() : (s.englishSubjects ? [s.englishSubjects] : []),
+                socialStudiesSubjects: Array.isArray(s.socialStudiesSubjects) ? s.socialStudiesSubjects.slice() : (s.socialStudiesSubjects ? [s.socialStudiesSubjects] : []),
+                miscSubjects: Array.isArray(s.miscSubjects) ? s.miscSubjects.slice() : (s.miscSubjects ? [s.miscSubjects] : []),
+                otherSubjects: s.otherSubjects ?? ""
             }
-            else {
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade } })
-            }
+            addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade, ...subjects } })
+            
         } else {
             alert(String(studentId) + " not found")
             setNewStudentId("")
@@ -145,7 +137,50 @@ function RightStats({ tutor }) {
     //the input in the 'Add Student' text field in Edit Students
     const [addStudentInput, setAddStudentInput] = useState("")
 
+    // called on clicking Upload Edits button
+    // updates tutor.students to the student Ids and subjectsTutored visible in studentData
+    function UploadEdits() {
+        if(tutorId !== undefined){
+            updateTutor({
+                ...tutor,
+                id: tutorId,
+                students: Object.keys(studentData),
+                // tutorData: Object.fromEntries(
+                //     Object.entries(studentData).map(([studentId, info]) => [
+                //         studentId,
+                //         {
+                //             mathSubjects: info.mathSubjects ?? [],
+                //             scienceSubjects: info.scienceSubjects ?? [],
+                //             englishSubjects: info.englishSubjects ?? [],
+                //             socialStudiesSubjects: info.socialStudiesSubjects ?? [],
+                //             miscSubjects: info.miscSubjects ?? [],
+                //             otherSubjects: info.otherSubjects ?? ""
+                //         }
+                //     ])
+                // )
+            })
+        }
+        else {
+            console.log("tutorId is undefined")
+            return
+        }    
+        console.log("Uploaded Edits")
+    }
 
+    const joinSubjectsForDisplay = (info) => {
+        if (!info) return "N/A"
+        const combined = [
+            ...(info.mathSubjects || []),
+            ...(info.scienceSubjects || []),
+            ...(info.englishSubjects || []),
+            ...(info.socialStudiesSubjects || []),
+            ...(info.miscSubjects || [])
+        ]
+        if (info.otherSubjects) combined.push(info.otherSubjects)
+        return combined.length ? combined.join(", ") : "N/A"
+    }
+    
+    // test student ID leFaNrKmmcXWjr6RvIPb sUbmM6OEZotTA3NMVQvw
     return (
         <div className="tutor-right-stats">
             <h3>Current Tutees: {Object.keys(studentData).length}</h3>
@@ -162,29 +197,30 @@ function RightStats({ tutor }) {
                     <tr key={id}>
                         <td>{id ? <Link to={`/view-student-info/${id}`}> {studentData[id].name}</Link> : "N/A"}</td>
                         <td>{studentData[id].grade}</td>
-                        <td>{studentData[id].subjects}</td>
+                        <td>{joinSubjectsForDisplay(studentData[id])}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-            <p className="edit-tutees" onClick={() => setShowEditors(!showEditors)}>Edit Tutees</p>
+            <p className="edit-tutees" onClick={() => setShowEditors(!showEditors)} style={{"cursor": "pointer"}}>Edit Tutees</p>
         
             {!showEditors ? null :
                 <>
                     <div style={{ "display": "flex", "flex-direction": "column" }}>
                         <div>
-                            <button title="currently inactive" style={{ "fontSize": "1.25rem", "color": "gray", "backgroundColor": "lightblue" }}>&#9888; Upload edits</button>
+                            <button onClick = {() => UploadEdits()} style={{"cursor": "pointer", "fontSize": "1.25rem", "color": "white", "backgroundColor": "red" }}>&#9888; Upload edits</button>
+
                         </div>
                         <br></br>
                         <div class="add-student">
                             <input placeholder="Student Id" onChange={(e) => setAddStudentInput(e.target.value)} style={{ "flex": "1" }}></input>
-                            <button onClick={() => setNewStudentId(addStudentInput)} style={{ "cursor": "pointer", "flex-basis": "30%", "fontSize": "1rem", "backgroundColor": "#ffca54" }}>Add Student</button>
+                            <button onClick={() => setNewStudentId(addStudentInput)} style={{ "cursor": "pointer", "flex-basis": "30%", "fontSize": "1rem", "backgroundColor": "#6260EF" }}>Add Student</button>
                         </div>
                         <br></br>
                         {Object.entries(studentData).map(([studentId, studentInfo]) => (
                             <div key={`se${studentId}`} className="student-editor">
                                 <button onClick={() => { setStudentData(Object.fromEntries(Object.entries(studentData).filter(([k, v]) => k !== String(studentId)))) }}
-                                    style={{ "alignSelf": "end", "backgroundColor": "#FF5050", "fontSize": "0.9rem" }} >
+                                    style={{ "cursor": "pointer", "alignSelf": "end", color:"Black", "backgroundColor": "#ffca54", "fontSize": "0.9rem" }} >
                                     &#9587; Delete
                                 </button>
                                 <div>
@@ -194,9 +230,59 @@ function RightStats({ tutor }) {
                                     Key: {studentId}
                                 </div>
                                 <div>
-                                    Subjects:
+                                    Math Subjects:
                                 </div>
-                                <input type='text' defaultValue={studentInfo["subjectsTutored"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "subjectsTutored": e.target.value } })}></input>
+                                <input type='text' defaultValue={studentInfo["mathSubjects"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "mathSubjects": e.target.value.split(",").map(s => s.trim()).filter(Boolean) } })}></input>
+                                <div>
+                                    English Subjects:
+                                </div>
+                                <input type='text' defaultValue={studentInfo["englishSubjects"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "englishSubjects": e.target.value.split(",").map(s => s.trim()).filter(Boolean) } })}></input>
+                                <div>Science Subjects (comma-separated):</div>
+                                <input
+                                    type="text"
+                                    value={(studentInfo.scienceSubjects || []).join(", ")}
+                                    onChange={(e) => {
+                                        const arr = e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                                        setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], scienceSubjects: arr } }))
+                                    }}
+                                />
+
+                                <div>English Subjects (comma-separated):</div>
+                                <input
+                                    type="text"
+                                    value={(studentInfo.englishSubjects || []).join(", ")}
+                                    onChange={(e) => {
+                                        const arr = e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                                        setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], englishSubjects: arr } }))
+                                    }}
+                                />
+
+                                <div>Social Studies Subjects (comma-separated):</div>
+                                <input
+                                    type="text"
+                                    value={(studentInfo.socialStudiesSubjects || []).join(", ")}
+                                    onChange={(e) => {
+                                        const arr = e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                                        setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], socialStudiesSubjects: arr } }))
+                                    }}
+                                />
+
+                                <div>Misc Subjects (comma-separated):</div>
+                                <input
+                                    type="text"
+                                    value={(studentInfo.miscSubjects || []).join(", ")}
+                                    onChange={(e) => {
+                                        const arr = e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                                        setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], miscSubjects: arr } }))
+                                    }}
+                                />
+
+                                <div>Other Subjects (free text):</div>
+                                <input
+                                    type="text"
+                                    value={studentInfo.otherSubjects ?? ""}
+                                    onChange={(e) => setStudentData(prev => ({ ...prev, [studentId]: { ...prev[studentId], otherSubjects: e.target.value } }))}
+                                />
                             </div>
                         ))}
                     </div>
@@ -208,222 +294,4 @@ function RightStats({ tutor }) {
     );
 
     
-}
-
-
-function StudentRow({ studentId }) {
-    const { data: student, isLoading, isError } = useGetStudentByIdQuery(studentId);
-
-    if (isLoading) return <tr><td colSpan="4">Loading...</td></tr>;
-    if (isError) return <tr><td colSpan="4">Failed to load student data</td></tr>;
-
-    return (
-        <tr>
-            <td>{student.firstName} {student.lastName}</td>
-            <td>{student.age}</td>
-            <td>{student.grade}</td>
-            <td>{[...student.mathSubjects || "", ...student.scienceSubjects || "", ...student.englishSubjects || "", ...student.socialStudiesSubjects || "", ...student.miscSubjects || ""]}</td>
-        </tr>
-    );
-}
-
-function StudentsSlider({ studentIds }) {
-    //integer for setting number of student cards available on web page for responsiveness to window size 
-    const [nSlides, setNSlides] = useState(slideCount)
-
-    //list for storing all student objects
-    //will start as a copy of tutor.students
-    const [studentData, setStudentData] = useState({})
-
-    //boolean for toggling visibility of studentData editors
-    const [showEditors, setShowEditors] = useState(false)
-
-    //string for storing user input in 'Add Student' text field 
-    const [addStudentInput, setAddStudentInput] = useState("")
-
-    //string for student id to fetch student from database with
-    const [newStudentId, setNewStudentId] = useState("")
-
-    //fetched student
-    //changes every time newStudentId changes 
-    const { data: student, isError, isLoading } = useGetStudentByIdQuery(newStudentId)
-
-    //newStudentId is set to every student id in tutorStudents 
-    useEffect(() => {
-        Object.keys(studentIds).forEach(studentId => {
-            setNewStudentId(String(studentId))
-        })
-    }, [studentIds])
-
-    //must useCallBack to prevent unnecessary renders of the useEffect hook 
-    const addToStudentData = useCallback((addition) => {
-        setStudentData(prevList => ({ ...addition, ...prevList }))
-    }, [])
-
-    const checkStudentExists = useCallback(async (studentId) => {
-        const db = getFirestore(firebaseApp)
-        const docRef = doc(db, "students", studentId)
-        const docSnap = await getDoc(docRef)
-        if (docSnap.exists()) {
-            if (studentId in studentIds && 'subjectsTutored' in studentIds[studentId]) { //must retrieve subjectsTutored from studentIds since not included in student object 
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade, "subjectsTutored": studentIds[studentId].subjectsTutored } })
-            }
-            else {
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "age": student.age, "grade": student.grade } })
-            }
-        } else {
-            alert(String(studentId) + " not found")
-            setNewStudentId("")
-        }
-    }, [student, addToStudentData])
-
-    useEffect(() => {
-        if (!isLoading && newStudentId !== "") {
-            checkStudentExists(newStudentId)
-        }
-    }, [isLoading, newStudentId, checkStudentExists])
-
-    const handleResize = () => {
-        setNSlides(slideCount())
-    }
-
-    window.addEventListener("resize", handleResize);
-
-    //returns how many slides should be shown given initial window dimensions
-    function slideCount() {
-        if (window.innerWidth < 600) {
-            return 1
-        }
-        if (window.innerWidth < 1000) {
-            return 2
-        }
-        else {
-            return 3
-        }
-    }
-
-    //INACTIVE
-    //supposed to be called on clicking Upload Edits button
-    //updates tutor.students to the student Ids and subjectsTutored visible in studentData
-    //currently updating in {studentId} : {subjectsTutored} : studentData[studentId][subjectsTutored] format
-    // function UploadEdits() {
-    //     const { id } = useParams()
-    //     useUpdateTutorByIdMutation({
-    //         tutorId: id,
-    //         tutorData: Object.fromEntries(
-    //             Object.entries(studentData).map(([studentId, studentInfo]) => [
-    //                 studentId,
-    //                 { ["subjectsTutored"]: studentInfo["subjectsTutored"] }
-    //             ])
-    //         )
-    //     })
-    // }
-
-    const settings = {
-        dots: true,
-        centerMode: false,
-        infinite: false,
-        speed: 500,
-        slidesToShow: Math.max(Math.min(nSlides, Object.keys(studentData).length), 2),
-        slidesToScroll: nSlides,
-        centerPadding: 0,
-        prevArrow: <SliderPrevArrow />,
-        nextArrow: <SliderNextArrow />
-    }
-
-
-    //customizing arrows to make them more visible
-    //even though on start the arrows may look like they have 0.5 opacity, once there are enough slides in the slider for there to be multiple panes, when the arrows become active, their opacity changes to 1.0 and appearance to black 
-    function SliderNextArrow(props) {
-        const { className, style, onClick } = props;
-        return (
-            <div
-                className={className}
-                style={{ ...style, display: "block", filter: "brightness(0%)", transform: 'scale(2)' }}
-                onClick={onClick}
-            />
-        );
-    }
-
-    //converts camel case to initial case, for eg. "firstName" to "First Name"
-    function varNameToText(name) {
-        let res = name.charAt(0).toUpperCase()
-        for (let i = 1; i < name.length; i++) {
-            if (name.charAt(i) === name.charAt(i).toUpperCase()) {
-                res += " "
-            }
-            res += name.charAt(i)
-        }
-        return res
-    }
-
-    function SliderPrevArrow(props) {
-        const { className, style, onClick } = props;
-        return (
-            <div
-                className={className}
-                style={{ ...style, display: "block", filter: "brightness(0%)", transform: 'scale(2)' }}
-                onClick={onClick}
-            />
-        );
-    }
-
-    return (
-        <div style={{ "marginLeft": "1rem", "marginRight": "1rem", "marginTop": "1rem" }}>
-            <Slider {...settings}>
-                {
-                    Object.entries(studentData).map(([studentId, studentInfo]) => (
-                        <div key={`s${studentId}`} className="student-slide-wrapper">
-                            <div className="student-slide">
-                                {Object.entries(studentInfo).map(([key, value]) => (
-                                    <div key={`s${studentId}-${key}`} className={`student-content-${Object.keys(studentInfo).indexOf(key) % 2}`}>
-                                        {varNameToText(key)}: {value}                                 </div>
-                                ))}
-                                <Link to={`/view-student-info/${studentId}`} className="view-student-page">View Student Page</Link>
-                            </div>
-                        </div>
-                    ))
-                }
-            </Slider>
-            <br></br>
-            <h3>Currently tutoring {Object.keys(studentData).length} students</h3>
-
-            <button style={{ "backgroundColor": "#00BB00", "fontSize": "1.25rem" }} onClick={() => setShowEditors(!showEditors)}>Edit Students&#11022;</button>
-            <br></br><br></br>
-
-            {!showEditors ? null :
-                <>
-                    <div style={{ "display": "flex", "flex-direction": "column" }}>
-                        <div>
-                            <button title="currently inactive" /*onClick = {() => uploadEdits()}*/ style={{ "fontSize": "1.25rem", "color": "gray", "backgroundColor": "lightblue" }}>&#9888; Upload edits</button>
-                        </div>
-                        <br></br>
-                        <div class="add-student">
-                            <input placeholder="Student Id" onChange={(e) => setAddStudentInput(e.target.value)} style={{ "flex": "1" }}></input>
-                            <button onClick={() => setNewStudentId(addStudentInput)} style={{ "cursor": "pointer", "flex-basis": "30%", "fontSize": "1rem", "backgroundColor": "#ffca54" }}>Add Student</button>
-                        </div>
-                        <br></br>
-                        {Object.entries(studentData).map(([studentId, studentInfo]) => (
-                            <div key={`se${studentId}`} className="student-editor">
-                                <button onClick={() => { setStudentData(Object.fromEntries(Object.entries(studentData).filter(([k, v]) => k !== String(studentId)))); console.log(studentData) }}
-                                    style={{ "alignSelf": "end", "backgroundColor": "#FF5050", "fontSize": "0.9rem" }} >
-                                    &#9587; Delete
-                                </button>
-                                <div>
-                                    Name: {studentInfo["name"]}
-                                </div>
-                                <div>
-                                    Key: {studentId}
-                                </div>
-                                <div>
-                                    Subjects:
-                                </div>
-                                <input type='text' defaultValue={studentInfo["subjectsTutored"]} onChange={(e) => setStudentData({ ...studentData, [studentId]: { ...studentData[studentId], "subjectsTutored": e.target.value } })}></input>
-                            </div>
-                        ))}
-                    </div>
-                </>
-            }
-        </div>
-    );
 }
