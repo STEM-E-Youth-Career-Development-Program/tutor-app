@@ -113,12 +113,12 @@ function RightStats({ tutor, tutorId }) {
         if (docSnap.exists()) {
             const s = docSnap.data()
             const subjects = {
-                mathSubjects: Array.isArray(s.mathSubjects) ? s.mathSubjects.slice() : (s.mathSubjects ? [s.mathSubjects] : []),
-                scienceSubjects: Array.isArray(s.scienceSubjects) ? s.scienceSubjects.slice() : (s.scienceSubjects ? [s.scienceSubjects] : []),
-                englishSubjects: Array.isArray(s.englishSubjects) ? s.englishSubjects.slice() : (s.englishSubjects ? [s.englishSubjects] : []),
-                socialStudiesSubjects: Array.isArray(s.socialStudiesSubjects) ? s.socialStudiesSubjects.slice() : (s.socialStudiesSubjects ? [s.socialStudiesSubjects] : []),
-                miscSubjects: Array.isArray(s.miscSubjects) ? s.miscSubjects.slice() : (s.miscSubjects ? [s.miscSubjects] : []),
-                otherSubjects: s.otherSubjects ?? ""
+                mathSubjects: Array.from(new Set(s.mathSubjects).intersection(new Set(tutor.mathSubjects))),
+                scienceSubjects: Array.from(new Set(s.scienceSubjects).intersection(new Set(tutor.scienceSubjects))),
+                englishSubjects: Array.from(new Set(s.englishSubjects).intersection(new Set(tutor.englishSubjects))),
+                socialStudiesSubjects: Array.from(new Set(s.socialStudiesSubjects).intersection(new Set(tutor.socialStudiesSubjects))),
+                miscSubjects: Array.from(new Set(s.miscSubjects).intersection(new Set(tutor.miscSubjects))),
+                otherSubjects: Array.from(new Set(s.otherSubjects).intersection(new Set(tutor.otherSubjects)))
             }
             addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade, ...subjects } })
             
@@ -138,6 +138,7 @@ function RightStats({ tutor, tutorId }) {
     const [addStudentInput, setAddStudentInput] = useState("")
 
     // called on clicking Upload Edits button
+    // currently uploads only student IDs
     // tutorsSlice may need a new property tutorData for storing both student IDs and subjects tutored
     function UploadEdits() {
         if(tutorId !== undefined){
