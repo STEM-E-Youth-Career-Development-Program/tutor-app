@@ -2,12 +2,19 @@
 div.title{
   padding-left: 1em;
   padding-right: 1em;
-
 }
+
+li {
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* div {
+  opacity: 0.8;
+} */
 
 .top{
   color: black;
-  height: 100vh;
+  height: 50vh;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -33,7 +40,7 @@ div.title{
   margin-left: 10%;
   margin-right: 10%;
   padding: 10%;
-  background-color: lightgray;
+  /* background-color: lightgray; */
 }
 
 
@@ -42,40 +49,44 @@ div.title{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   display: inline-block;
-  background-color: #B5CEFF;
-  
-
+  background-color: #a59fe3;
   text-align: center;
   align-items: center;
-
   width: 100%;
-  height: 100%;
+  height: 10%;
+  position: fixed;
+  bottom: 0%;
 }
 
 .view-parent button, .view-parent a {
   width: 12em;
   margin: 1em;
   height: 4em;
-  border: 4px solid;
+  /* border: 4px solid;
   border-color: rgba(21, 38, 188, 1);
   background-color: #4453DD;
   color: white;
-  font-size: 30px;
-  border-radius: 15px;
+  /* border-radius: 15px;
   justify-content: center;
   align-content: center;
   display: inline-block;
   text-decoration: none;
+  color: white; */ 
+  font-size: 30px;
+  background-color: rgba(255, 255, 255, 0.2); 
+  backdrop-filter: blur(10px);          
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  border-radius: 12px;
+  padding: 10px 20px;
   color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: opacity 0.5s ease-in-out;
 }
 
-.view-parent button:hover,.view-parent a:hover {
-  opacity: 0.65;
+.view-parent button:hover,.view-parent a:hover, li:hover {
+  opacity: 0.40;
   cursor: pointer;
 }
-
-
-  
-
