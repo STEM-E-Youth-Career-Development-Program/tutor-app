@@ -11,6 +11,9 @@ body {
     sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(138, 138, 218);
+  background-image: url("newclouds.png");
+  background-size: cover;
 }
 
 code {
