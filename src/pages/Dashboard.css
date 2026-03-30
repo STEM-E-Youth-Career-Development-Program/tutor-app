@@ -54,16 +54,14 @@ li {
   text-align: center;
   align-items: center;
   width: 100%;
-  height: 10%;
-  position: fixed;
-  bottom: 5%;
+  height: 100%;
 }
 
 .view-parent button, .view-parent a {
   width: 12em;
   margin: 1em;
-  
-  /* border: 4px solid;
+  height: 4em;
+  border: 4px solid;
   border-color: rgba(21, 38, 188, 1);
   background-color: #4453DD;
   color: white;
