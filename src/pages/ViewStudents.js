@@ -49,7 +49,7 @@ function SortOptions({ filters, setFilters }) {
                     Subjects
                     <br />
                     <div className="Dropdowndiv">
-                        {['Math', 'Science', 'English'].map((subject) => (
+                        {['Math', 'Science', 'English', 'Misc', 'SocialStudies', 'Other'].map((subject) => (
                             <div key={subject}>
                                 <input type="checkbox" name={subject} value={subject} onChange={() => handleCheckboxChange('subjects', subject)} />
                                 <label htmlFor={subject}>{subject}</label>
@@ -62,7 +62,7 @@ function SortOptions({ filters, setFilters }) {
                     Grade
                     <br />
                     <div className="Dropdowndiv">
-                        {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'].map((grade) => (
+                        {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map((grade) => (
                             <div key={grade}>
                                 <input type="checkbox" name={grade} value={grade} onChange={() => handleCheckboxChange('grades', grade)} />
                                 <label htmlFor={grade}>{grade}</label>
@@ -113,7 +113,7 @@ function ViewStudents() {
 
     const [students, setStudents] = useState([]);
     const [tutorNames, setTutorNames] = useState({});
-    const topics = ["mathSubjects", "scienceSubjects", "englishSubjects", "socialStudiesSubjects", "miscSubjects", "otherSubjects"];
+    const topics = ["mathSubjects", "scienceSubjects", "englishSubjects", "socialstudiesSubjects", "miscSubjects", "otherSubjects"];
 
     const { data: studentQuery, isLoading, studentLoading, error: studentError } = useGetAvailableStudentsQuery();
     const { data: tutorQuery, isLoading: tutorLoading, error: tutorError } = useGetAvailableTutorsQuery();
@@ -143,6 +143,8 @@ function ViewStudents() {
                     }
                 });
 
+                console.log(subjectTopics);
+
                 let names = doc["tutors"].map((tutorId) => tutorNames[tutorId] || "[N/A]"); //tutor does not exist
 
                 return {
@@ -162,9 +164,9 @@ function ViewStudents() {
 
 
     const filteredStudents = students.filter(student => {
-        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key);
-        const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || student.subjects.includes(key));
-        const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || student.grade === key);
+        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key.toLowerCase());
+        const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || student.subjectTopics.includes(key.toLowerCase()));
+        const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || student.grade === Number(key));
         const timezonesMatch = Object.keys(filters.timezones).every(key => !filters.timezones[key] || student.timezone === key);
         return statusMatch && subjectsMatch && gradesMatch && timezonesMatch;
     });
