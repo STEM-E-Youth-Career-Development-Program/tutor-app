@@ -1,13 +1,14 @@
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDSr52mwtEAYRnUIWfy2mESjDtR9qtUD1Y",
-    authDomain: "stem-e-tutor-app.firebaseapp.com",
-    projectId: "stem-e-tutor-app",
-    storageBucket: "stem-e-tutor-app.firebasestorage.app",
-    messagingSenderId: "246673595340",
-    appId: "1:246673595340:web:735d731a5f34af866b1b69"
-};
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID
+};  
 
 // eslint-disable-next-line no-unused-vars
 export const firebaseApp = initializeApp(firebaseConfig);
+   
