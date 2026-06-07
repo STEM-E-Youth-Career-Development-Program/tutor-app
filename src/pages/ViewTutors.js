@@ -96,7 +96,7 @@ function TutorRow({ name, status, numStudents, maxStudents, subjects, id }) {
         <tr>
             
             <td><a href={link}>{name}</a></td>
-            <td>{status}</td>
+            <td>{labels[status]}</td>
             <td>{numStudents}</td>
             <td>{maxStudents}</td>
             <td>{subjects}</td>
@@ -143,7 +143,7 @@ function ViewTutors() {
     }
     const filteredRows = tutors.filter(tutor => {
         console.log(tutor);
-        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || tutor.status === key.charAt(0).toUpperCase() + key.slice(1));
+        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || tutor.status === key);
         const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || tutor.subjectTopics.includes(key));
         const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || tutor.grade == key);
         const timezonesMatch = Object.keys(filters.timezones).every(key => !filters.timezones[key] || tutor.timezone === key);

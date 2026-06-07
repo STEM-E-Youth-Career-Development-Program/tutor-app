@@ -126,7 +126,7 @@ function Matching() {
             await updateTutor({
                 id: tutorIdToMatch,
                 students: [...(tutorToUpdate.students ?? []), studentId],
-                status: "matched",
+                status: "currentlyTutoring",
             });
 
             // Updates the tutor record: adds the student's id, updates the student count, and sets status to "matched"
