@@ -163,13 +163,30 @@ function ViewStudents() {
     }, [tutorNames, studentQuery]);
 
 
-    const filteredStudents = students.filter(student => {
-        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || student.status === key.toLowerCase());
-        const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || student.subjectTopics.includes(key.toLowerCase()));
-        const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || student.grade === Number(key));
-        const timezonesMatch = Object.keys(filters.timezones).every(key => !filters.timezones[key] || student.timezone === key);
-        return statusMatch && subjectsMatch && gradesMatch && timezonesMatch;
-    });
+   const filteredStudents = students.filter(student => {
+       const selectedStatuses = Object.keys(filters.status).filter(key => filters.status[key]);
+       const selectedSubjects = Object.keys(filters.subjects).filter(key => filters.subjects[key]);
+       const selectedGrades = Object.keys(filters.grades).filter(key => filters.grades[key]);
+       const selectedTimezones = Object.keys(filters.timezones).filter(key => filters.timezones[key]);
+
+       const statusMatch =
+           selectedStatuses.length === 0 ||
+           selectedStatuses.some(key => student.status === key.toLowerCase());
+
+       const subjectsMatch =
+           selectedSubjects.length === 0 ||
+           selectedSubjects.some(key => student.subjectTopics.includes(key.toLowerCase()));
+
+       const gradesMatch =
+           selectedGrades.length === 0 ||
+           selectedGrades.some(key => student.grade === Number(key));
+
+       const timezonesMatch =
+           selectedTimezones.length === 0 ||
+           selectedTimezones.some(key => student.timezone === key);
+
+       return statusMatch && subjectsMatch && gradesMatch && timezonesMatch;
+   });
 
     return (
         <>
