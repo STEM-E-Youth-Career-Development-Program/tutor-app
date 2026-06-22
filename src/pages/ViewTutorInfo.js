@@ -120,21 +120,35 @@ function RightStats({ tutor }) {
     }, [])
 
     const checkStudentExists = useCallback(async (studentId) => {
-        const db = getFirestore(firebaseApp)
-        const docRef = doc(db, "students", studentId)
-        const docSnap = await getDoc(docRef)
+        const db = getFirestore(firebaseApp);
+        const docRef = doc(db, "students", studentId);
+        const docSnap = await getDoc(docRef);
+
         if (docSnap.exists()) {
-            if (studentId in tutor.students) { //must retrieve subjectsTutored from studentIds since not included in student object 
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade, "subjects": [...student.mathSubjects, ...student.scienceSubjects, ...student.englishSubjects, ...student.socialStudiesSubjects, ...student.miscSubjects, student.otherSubjects] } })
-            }
-            else {
-                addToStudentData({ [studentId]: { "name": student.firstName + " " + student.lastName, "grade": student.grade } })
+            if (studentId in tutor.students) {
+                addToStudentData({
+                    [studentId]: {
+                        name: student.firstName + " " + student.lastName,
+                        grade: student.grade,
+                        subjects:
+                            tutor.students?.[studentId]?.subjectsTutored ??
+                            tutor.students?.find?.(s => s.id === studentId)?.subjectsTutored ??
+                            []
+                    }
+                });
+            } else {
+                addToStudentData({
+                    [studentId]: {
+                        name: student.firstName + " " + student.lastName,
+                        grade: student.grade
+                    }
+                });
             }
         } else {
-            alert(String(studentId) + " not found")
-            setNewStudentId("")
+            alert(String(studentId) + " not found");
+            setNewStudentId("");
         }
-    }, [student, addToStudentData])
+    }, [student, tutor.students, addToStudentData]);
 
     useEffect(() => {
         if (!isLoading && newStudentId !== "") {
@@ -162,7 +176,11 @@ function RightStats({ tutor }) {
                     <tr key={id}>
                         <td>{id ? <Link to={`/view-student-info/${id}`}> {studentData[id].name}</Link> : "N/A"}</td>
                         <td>{studentData[id].grade}</td>
-                        <td>{studentData[id].subjects}</td>
+                        <td>
+                            {Array.isArray(studentData[id].subjects)
+                                ? studentData[id].subjects.join(", ")
+                                : studentData[id].subjects || "N/A"}
+                        </td>
                     </tr>
                 ))}
                 </tbody>
