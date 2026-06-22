@@ -141,12 +141,50 @@ function ViewTutors() {
             
         });
     }
+    // const filteredRows = tutors.filter(tutor => {
+    //     console.log(tutor);
+    //     const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || tutor.status === key);
+    //     const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || tutor.subjectTopics.includes(key));
+    //     const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || tutor.grade == key);
+    //     const timezonesMatch = Object.keys(filters.timezones).every(key => !filters.timezones[key] || tutor.timezone === key);
+    //     return statusMatch && subjectsMatch && gradesMatch && timezonesMatch;
+    // });
+
     const filteredRows = tutors.filter(tutor => {
-        console.log(tutor);
-        const statusMatch = Object.keys(filters.status).every(key => !filters.status[key] || tutor.status === key);
-        const subjectsMatch = Object.keys(filters.subjects).every(key => !filters.subjects[key] || tutor.subjectTopics.includes(key));
-        const gradesMatch = Object.keys(filters.grades).every(key => !filters.grades[key] || tutor.grade == key);
-        const timezonesMatch = Object.keys(filters.timezones).every(key => !filters.timezones[key] || tutor.timezone === key);
+        const selectedStatuses = Object.keys(filters.status).filter(
+            key => filters.status[key]
+        );
+
+        const selectedSubjects = Object.keys(filters.subjects).filter(
+            key => filters.subjects[key]
+        );
+
+        const selectedGrades = Object.keys(filters.grades).filter(
+            key => filters.grades[key]
+        );
+
+        const selectedTimezones = Object.keys(filters.timezones).filter(
+            key => filters.timezones[key]
+        );
+
+        const statusMatch =
+            selectedStatuses.length === 0 ||
+            selectedStatuses.some(key => tutor.status === key);
+
+        const subjectsMatch =
+            selectedSubjects.length === 0 ||
+            selectedSubjects.some(key =>
+                (tutor.subjectTopics || []).includes(key)
+            );
+
+        const gradesMatch =
+            selectedGrades.length === 0 ||
+            selectedGrades.some(key => tutor.grade === Number(key));
+
+        const timezonesMatch =
+            selectedTimezones.length === 0 || 
+            selectedTimezones.some(key => tutor.timezone === key);
+
         return statusMatch && subjectsMatch && gradesMatch && timezonesMatch;
     });
 
